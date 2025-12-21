@@ -109,15 +109,13 @@ ubuntu-22.04.x-live-server-arm64.iso
 1. Open **VMware Workstation Pro**
 2. Click **Create a New Virtual Machine**
 3. Select **Installer disc image file (iso)**
-4. Browse to your Ubuntu ISO
+4. Browse to the Ubuntu ISO file you downloaded earlier
 5. Click **Next**
-6. Guest OS:
-
-   * Linux → Ubuntu 64-bit
+6. Follow the recommended setting options
 7. Name the VM (e.g., `Ubuntu 22.04`)
 8. Disk size:
 
-   * Recommended: **25–40 GB**
+   * Recommended: **20–40 GB**
 9. Click **Finish**
 
 ---
@@ -125,13 +123,11 @@ ubuntu-22.04.x-live-server-arm64.iso
 ### macOS (VMware Fusion – Intel & Apple Silicon)
 
 1. Open **VMware Fusion Pro**
-2. Click **Create New**
-3. Select **Install from disc or image**
-4. Choose the Ubuntu ISO
+2. Click **Create New** if prompted
+3. Select **Install from disc or image** then press `Continue`
+4. Drag the Ubuntu ISO file recently downloaded or click on `Use another disc or disc image...` to choose the Ubuntu ISO file downloaded
 5. Click **Continue**
-6. OS Type:
-
-   * Linux → Ubuntu
+6. Follow the recommended setting options (Disk size: 20-40 GB)
 7. Finish setup
 
 ---
@@ -140,47 +136,60 @@ ubuntu-22.04.x-live-server-arm64.iso
 
 ### Windows & macOS Intel (Desktop Installer)
 
-1. VM boots into Ubuntu installer
-2. Select **Try or Install Ubuntu**
-3. Choose language
-4. Keyboard layout → **Continue**
-5. Updates & other software:
+1. Press `Ok` on the annoucement pop up notifications
+2. VM boots into Ubuntu installer
+3. Select **Try or Install Ubuntu** if prompted
+4. Choose language
+5. Keyboard layout → **Continue**
+6. Updates & other software:
 
    * **Normal installation**
-6. Installation type:
+   * **Download updates while installing Ubuntu**
+   * **Install third-party software ...**
+7. Installation type:
 
    * **Erase disk and install Ubuntu** (This affects only the space you had given the virtual machine, not your entire computer)
-7. Select time zone
-8. Create user account
-9. Click **Install**
-10. Restart when prompted
+8. Click on `Install Now` followed by `Continue` if promted to `Write the changes to disks?`
+9. Select time zone
+10. Create user account
+11. Click **Install**
+12. Restart when prompted
 
 ---
 
 ### macOS Apple Silicon (Server Installer)
 
-1. VM boots into **text-based Ubuntu Server installer**
-2. Choose:
+1. Select **Try or Install Ubuntu** if prompted (use the arrow keys to change options and press `Enter` to select options)
+2. VM boots into **text-based Ubuntu Server installer**
+3. Choose:
 
    * Language
    * Keyboard layout
-3. Network:
+4. If prompted to update the installer, feel free to do so
+5. Choose the base for the installation:
+     * **Ubuntu Server**
+     * **Search for third-party drivers**
+7. Network:
 
    * Accept default (automatic)
-4. Storage:
+8. Storage:
 
    * **Use entire disk** (This affects only the space you had given the virtual machine, not your entire computer)
    * Accept defaults
-5. Profile setup:
+9. Click on `Continue` if prompted about destructive action on the disk (This affects only the space you had given the virtual machine, not your entire computer)
+10. Profile setup:
 
    * Username
    * Password
-6. SSH:
+12. Skip Ubuntu Pro
+13. SSH:
 
    * Optional (can skip)
-7. Finish installation
-8. Reboot
-9. Log in at the terminal
+14. Can skip any additional options
+15. Finish installation (might take a while)
+16. Reboot
+17. Press `Enter` if prompted to remove installation media
+18. Log in at the terminal
 
 At this point, **no desktop is installed yet**.
 
@@ -195,7 +204,7 @@ sudo apt update
 sudo apt upgrade -y
 sudo apt install ubuntu-desktop -y
 ```
-
+Press enter if asked `Which services should be restarted`
 > This may take several minutes.
 
 When finished:
