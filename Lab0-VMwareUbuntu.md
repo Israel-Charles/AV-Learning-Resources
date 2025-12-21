@@ -32,7 +32,7 @@ In this lab, you will:
 * Download from:
   [https://www.techpowerup.com/download/vmware-workstation-pro/](https://www.techpowerup.com/download/vmware-workstation-pro/)
   * Click on the `Download` button for Windows (This tutorial is tested on the `25H2` version, but feel free to try a newer version if available)
-  * Select a server to download it from and the download should start automatically (the server closest to you is usually a good choice)
+  * Select a server to download it from, and the download should start automatically (the server closest to you is usually a good choice)
 
 **Install steps:**
 
@@ -50,7 +50,7 @@ In this lab, you will:
 * VMware product: **VMware Fusion Pro (Free for personal use)**
 * Download from:
   [https://www.techspot.com/downloads/2755-vmware-fusion-mac.html](https://www.techspot.com/downloads/2755-vmware-fusion-mac.html)
-  * From the download options, click click on a version and the download should start automatically (This tutorial is tested on the `25H2` version, but feel free to try a newer version if available)
+  * From the download options, click on a version, and the download should start automatically (This tutorial is tested on the `25H2` version, but feel free to try a newer version if available)
 
 **Install steps:**
 
@@ -71,7 +71,7 @@ In this lab, you will:
 Download **Ubuntu 22.04 Desktop (amd64)**:
 [https://releases.ubuntu.com/jammy/](https://releases.ubuntu.com/jammy/)
 
-On the `Desktop image` section, click on `64-bit PC (AMD64) desktop image`
+On the `Desktop image` section, click on `64-bit PC (AMD64) desktop image`, and the download should start automatically
 
 File name example:
 
