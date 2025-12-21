@@ -155,6 +155,7 @@ ubuntu-22.04.x-live-server-arm64.iso
 11. Click **Install**
 12. Restart when prompted
 
+> **When asked to upgrade Ubuntu, such as going from the 22.04 installed to 24.04, it is imperative that you do not upgrade**
 ---
 
 ### macOS Apple Silicon (Server Installer)
@@ -215,6 +216,8 @@ sudo reboot
 
 After reboot, the **Ubuntu 22.04 Desktop (GNOME)** will load.
 
+> **When asked to upgrade Ubuntu, such as going from the 22.04 installed to 24.04, it is imperative that you do not upgrade**
+
 ---
 
 ## Step 6: Install VMware Tools (All Platforms)
@@ -227,8 +230,7 @@ VMware Tools improves:
 
 ### Inside the Ubuntu VM
 
-1. VMware menu → **Install VMware Tools**
-2. In Ubuntu, open a terminal and run:
+In Ubuntu, open a terminal (go on apps and look for `Terminal` and run:
 
 ```bash
 sudo apt install open-vm-tools-desktop -y
