@@ -246,6 +246,7 @@ After reboot, confirm:
 * Ubuntu desktop loads successfully
 * Screen resizes automatically
 * Mouse moves smoothly in and out of the VM
+* Feel free to play around with the display settings to optimize it
 
 ---
 
