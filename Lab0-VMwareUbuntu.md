@@ -90,6 +90,8 @@ This is the **official Ubuntu Desktop ISO**.
 Instead, download **Ubuntu 22.04 Server (ARM)**:
 [https://cdimage.ubuntu.com/releases/jammy/release/](https://cdimage.ubuntu.com/releases/jammy/release/)
 
+On the `Server install image` section, click on `64-bit ARM (ARMv8/AArch64) server install image`, and the download should start automatically
+
 File name example:
 
 ```
