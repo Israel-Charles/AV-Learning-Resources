@@ -32,7 +32,7 @@ In this lab, you will:
 * Download from:
   [https://www.techpowerup.com/download/vmware-workstation-pro/](https://www.techpowerup.com/download/vmware-workstation-pro/)
   * Click on the `Download` button for Windows (This tutorial is tested on the `25H2` version, but feel free to try a newer version if available)
-  * Select a server to download it from (download should start automatically)
+  * Select a server to download it from and the download should start automatically (the server closest to you is usually a good choice)
 
 **Install steps:**
 
