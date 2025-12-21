@@ -55,9 +55,9 @@ In this lab, you will:
 **Install steps:**
 
 1. Open the downloaded `.dmg`
-2. Drag **VMware Fusion** to **Applications**
-3. Launch VMware Fusion
-4. Approve permissions in **System Settings → Privacy & Security**
+2. Double click **VMware Fusion** or drag it to **Applications** (depends on installer)
+3. Launch VMware Fusion if not automatically launched
+4. Approve permissions in **System Settings → Privacy & Security → Accessibility**
 5. Restart if requested
 
 > VMware Fusion automatically installs the correct version for **Intel** or **Apple Silicon** Macs.
