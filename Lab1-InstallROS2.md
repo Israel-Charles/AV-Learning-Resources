@@ -159,14 +159,11 @@ ros2 run demo_nodes_py listener
 
 If messages appear in the listener, ROS 2 is working correctly.
 
+To stop the running nodes press `Ctrl + c`
+
 ---
 
 ## 10. Common VMware-Specific Notes
-
-### Networking
-
-* VMware must be set to **NAT networking**
-* ROS 2 uses DDS and works **locally** without extra configuration
 
 ### Performance Tips
 
@@ -188,8 +185,6 @@ If messages appear in the listener, ROS 2 is working correctly.
 source /opt/ros/humble/setup.bash
 ```
 
-If that works, check `.bashrc`.
-
 ---
 
 ### Problem: Slow VM
@@ -200,6 +195,27 @@ If that works, check `.bashrc`.
 * Disable unnecessary Ubuntu startup apps
 
 ---
+
+## 12. Uninstalling ROS2 (FYI - DO NOT DO THIS UNLESS NEEDED)
+If you ever need to remove ROS2 or switch to a source-based installation, use the following commands:
+
+```
+sudo apt remove ~nros-humble-* && sudo apt autoremove
+```
+
+Additionally, remove the ROS2 repository:
+
+```
+sudo rm /etc/apt/sources.list.d/ros2.list
+sudo apt update
+sudo apt autoremove
+```
+
+(Optional: Consider upgrading packages that were previously shadowed by ROS2 installations.)
+
+```
+sudo apt upgrade
+```
 
 ## 12. Summary (What You Should Have Now)
 
