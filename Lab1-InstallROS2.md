@@ -135,10 +135,10 @@ source ~/.bashrc
 
 ## 9. Verify ROS 2 Installation
 
-### Check ROS version:
+### Check that ROS 2 is installed:
 
 ```bash
-ros2 --version
+ros2 --help
 ```
 
 You should see output indicating ROS 2 is installed.
