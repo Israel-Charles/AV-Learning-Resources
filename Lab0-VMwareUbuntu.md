@@ -19,7 +19,7 @@ In this lab, you will:
 
 * A computer running **Windows**, **macOS (Intel)**, or **macOS (Apple Silicon)**
 * At least **8 GB RAM recommended**
-* At least **40 GB free disk space**
+* At least **50 GB free disk space**
 * Internet connection
 
 ---
@@ -115,7 +115,7 @@ ubuntu-22.04.x-live-server-arm64.iso
 7. Name the VM (e.g., `Ubuntu 22.04`)
 8. Disk size:
 
-   * Recommended: **20–40 GB**
+   * Recommended: **50 GB**
 9. Click **Finish**
 
 ---
@@ -127,7 +127,7 @@ ubuntu-22.04.x-live-server-arm64.iso
 3. Select **Install from disc or image** then press `Continue`
 4. Drag the Ubuntu ISO file recently downloaded or click on `Use another disc or disc image...` to choose the Ubuntu ISO file downloaded
 5. Click **Continue**
-6. Follow the recommended setting options (Disk size: 20-40 GB)
+6. Follow the recommended setting options (Disk size: 50 GB)
 7. Finish setup
 
 ---
