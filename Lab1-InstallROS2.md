@@ -113,7 +113,10 @@ If `rosdep init` says it already exists, that is OK.
 
 ## 8. Source ROS 2
 
-You must source ROS every time you open a terminal. `source /opt/ros/humble/setup.bash`
+You must source ROS every time you open a terminal. 
+```
+source /opt/ros/humble/setup.bash
+```
 
 > Replace ` .bash` with your shell extension if you’re not using bash. You can find out which shell you are using by running the command `echo $0`. That command shows the shell that was used to start the current session. Some examples are: `setup.bash`, `setup.sh`, `setup.zsh`.
 
@@ -124,11 +127,16 @@ echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
 source ~/.bashrc
 ```
 
-> One important caution
+> **One important caution**
+> 
 > If you later install multiple ROS versions, auto-sourcing one distro can cause conflicts.
+> 
 > In that case, you might:
-> Comment it out in .bashrc, or
-> Source the one you want manually
+> 
+> - Comment it out in .bashrc, or
+> 
+> - Source the one you want manually
+> 
 > For a single-distro setup, this is perfectly fine.
 
 ---
