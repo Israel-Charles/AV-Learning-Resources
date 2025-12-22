@@ -1,6 +1,6 @@
 # Lab 1 – Installing ROS 2 Humble on Ubuntu 22.04
 
-## 0. Verify Ubuntu Version (Required)
+## 0. Verify Ubuntu Version
 
 ROS 2 **Humble** officially supports **Ubuntu 22.04**.
 
@@ -111,10 +111,13 @@ If `rosdep init` says it already exists, that is OK.
 
 ---
 
-## 8. Source ROS 2 Automatically
+## 8. Source ROS 2
 
-You must source ROS every time you open a terminal.
-We will automate this.
+You must source ROS every time you open a terminal. `source /opt/ros/humble/setup.bash`
+
+> Replace ` .bash` with your shell extension if you’re not using bash. You can find out which shell you are using by running the command `echo $0`. That command shows the shell that was used to start the current session. Some examples are: `setup.bash`, `setup.sh`, `setup.zsh`.
+
+### Source ROS 2 Automatically (Optional)
 
 ```bash
 echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
@@ -158,7 +161,7 @@ If messages appear in the listener, ROS 2 is working correctly.
 
 ---
 
-## 10. Common VMware-Specific Notes (Verified)
+## 10. Common VMware-Specific Notes
 
 ### Networking
 
@@ -170,7 +173,7 @@ If messages appear in the listener, ROS 2 is working correctly.
 * Allocate **at least**:
 
   * 2 GB RAM (4+ GB recommended)
-  * 2 CPU cores (4+ recommended)
+  * 2 CPU cores (2+ recommended)
 * Enable **3D acceleration** in VMware settings
 
 ---
