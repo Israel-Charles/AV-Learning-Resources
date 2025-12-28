@@ -232,3 +232,24 @@ sudo apt upgrade
 - rosdep initialized
 - ROS automatically sourced
 - Verified with talker/listener
+
+---
+---
+
+## **Deliverable**
+
+### Run a Talker/Listener Test:
+
+Open **Terminal 1**:
+
+```bash
+ros2 run demo_nodes_cpp talker
+```
+
+Open **Terminal 2**:
+
+```bash
+ros2 run demo_nodes_py listener
+```
+
+### **Submit a screenshot of the `listener` node output showing what it heard from the `talker` node**
