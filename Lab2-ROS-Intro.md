@@ -2,9 +2,9 @@
 
 ## Lab Overview
 
-This lab introduces the fundamental concepts of ROS2, including nodes, topics, messages, launchfiles, and the ROS2 workspace structure. You will implement publisher/subscriber nodes in both Python and C++, visualize message flow using ROS2 command-line tools, and build a multi-node communication system.
+This lab introduces the fundamental concepts of **ROS2**, including **nodes, topics, messages, launchfiles, and the ROS2 workspace structure**. You will implement **publisher/subscriber nodes** in both **Python and C++**, visualize message flow using ROS2 command-line tools, and build a **multi-node communication system**.
 
-ROS 2 is developed and maintained by Open Robotics and is the industry standard for modern robotic systems.
+*ROS 2 is developed and maintained by Open Robotics and is the industry standard for modern robotic systems.*
 
 ---
 
@@ -97,18 +97,16 @@ Understand **nodes, topics, and messages** through hands-on implementation.
 * **Track A (Python)** – `rclpy`
 * **Track B (C++)** – `rclcpp`
 
-(Your provided Python and C++ examples fit here with **no major code changes required**.)
+### **Track A - Python Publisher-Subscriber Implementation**
 
-#### Track A - Python Publisher-Subscriber Implementation
-
-##### Step 1: Create Python Package
+#### **Step 1: Create Python Package**
 
 1. **In the ROS2 workspace you created, Navigate to the `src/` directory:**
    ```bash
    cd ~/ros2_ws/src
    ```
 
-2. **Create a Python package named `py_pkg` with dependencies on `rclpy` and `std_msgs`:**
+2. **Create a Python package named `my_python_pkg` with dependencies on `rclpy` and `std_msgs`:**
    ```bash
    ros2 pkg create my_python_pkg --build-type ament_python --dependencies rclpy std_msgs
    ```
@@ -120,7 +118,8 @@ Understand **nodes, topics, and messages** through hands-on implementation.
    > - `std_msgs` is a package that provides standard message types, such as String, Int32, and Float64
    
 3. **Examine the generated package structure** and identify the purpose of each file/directory.
-   This creates the following structure:
+
+   **Generated Package Structure:**
 
     ```bash
     my_python_pkg/
@@ -133,7 +132,9 @@ Understand **nodes, topics, and messages** through hands-on implementation.
         └── __init__.py # used to mark directories on disk as Python package directories
     ```
 
-##### Step 2: Write the Publisher Node
+---
+
+#### **Step 2: Write the Publisher Node**
 
 In the `my_python_pkg` folder, create a file named `simple_publisher.py`, which will be the publisher node.
 
@@ -198,7 +199,9 @@ if __name__ == '__main__':
     main()
 ```
 
-##### Step 3: Write the Subscriber Node
+---
+
+#### **Step 3: Write the Subscriber Node**
 
 Create the subscriber node as `simple_subscriber.py`.
 
@@ -267,7 +270,9 @@ if __name__ == '__main__':
 > [!Note]
 > The `try/except/finally` block is not strictly necessary, but it’s considered good practice for graceful shutdown.
 
-##### Step 4: Update the Setup Configuration
+---
+
+#### **Step 4: Update the Setup Configuration**
 
 Modify `setup.py` to install your nodes.
 
@@ -298,7 +303,9 @@ setup(
 )
 ```
 
-##### Step 5: Build and Source the Package
+---
+
+#### **Step 5: Build and Source the Package**
 
 Go to the workspace root, build the package, and source it:
 
@@ -310,7 +317,9 @@ source install/setup.bash
 
 > Replace `.bash` with the appropriate Shell if you are not using Bash Shell
 
-##### Step 6: Run the Nodes
+---
+
+#### Step 6: Run the Nodes
 
 In two separate terminals, run the publisher and subscriber:
 
@@ -321,14 +330,14 @@ source ~/ros2_ws/install/setup.bash
 ros2 run my_python_pkg simple_publisher
 ```
 
-###### Terminal 2: Subscriber
+##### Terminal 2: Subscriber
 
 ```bash
 source ~/ros2_ws/install/setup.bash
 ros2 run my_python_pkg simple_subscriber
 ```
 
-##### Expected Output
+#### Expected Output
 
 - **Publisher Terminal:**
 
@@ -345,7 +354,10 @@ ros2 run my_python_pkg simple_subscriber
   [INFO] [simple_subscriber]: Received: "Hello ROS 2: 1"
   ...
   ```
-#### Track B - C++ Publisher-Subscriber Implementation
+
+---
+
+### Track B - C++ Publisher-Subscriber Implementation
 
 To implement the **publisher and subscriber in C++** transmitting standard `Strings`, follow the steps below.
 
