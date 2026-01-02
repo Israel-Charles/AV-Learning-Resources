@@ -58,13 +58,13 @@ ros2_ws/
 
 ---
 
-## **Part 0 — Environment Setup & Workspace**
+# **Part 0 — Environment Setup & Workspace**
 
-### Objective
+## Objective
 
 **Build and run a ROS 2 workspace**.
 
-### Tasks
+## Tasks
 
 1. Source your ROS 2 installation if not automatically done already:
 
@@ -80,26 +80,26 @@ ros2_ws/
    source install/setup.bash
    ```
 
-### Checkpoint
+## Checkpoint
 
 * `ros2 pkg list` runs without errors
 
 ---
 
-## **Part 1 — Publisher & Subscriber Nodes**
+# **Part 1 — Publisher & Subscriber Nodes**
 
-### Objective
+## Objective
 
 Understand **nodes, topics, and messages** through hands-on implementation.
 
-### Tasks
+## Tasks
 
 * **Track A (Python)** – `rclpy`
 * **Track B (C++)** – `rclcpp`
 
-### **Track A - Python Publisher-Subscriber Implementation**
+## **Track A - Python Publisher-Subscriber Implementation**
 
-#### **Step 1: Create Python Package**
+### **Step 1: Create Python Package**
 
 1. **In the ROS2 workspace you created, Navigate to the `src/` directory:**
    ```bash
@@ -134,7 +134,7 @@ Understand **nodes, topics, and messages** through hands-on implementation.
 
 ---
 
-#### **Step 2: Write the Publisher Node**
+### **Step 2: Write the Publisher Node**
 
 In the `my_python_pkg` folder, create a file named `simple_publisher.py`, which will be the publisher node.
 
@@ -201,7 +201,7 @@ if __name__ == '__main__':
 
 ---
 
-#### **Step 3: Write the Subscriber Node**
+### **Step 3: Write the Subscriber Node**
 
 Create the subscriber node as `simple_subscriber.py`.
 
@@ -272,7 +272,7 @@ if __name__ == '__main__':
 
 ---
 
-#### **Step 4: Update the Setup Configuration**
+### **Step 4: Update the Setup Configuration**
 
 Modify `setup.py` to install your nodes.
 
@@ -305,7 +305,7 @@ setup(
 
 ---
 
-#### **Step 5: Build and Source the Package**
+### **Step 5: Build and Source the Package**
 
 Go to the workspace root, build the package, and source it:
 
@@ -319,18 +319,18 @@ source install/setup.bash
 
 ---
 
-#### Step 6: Run the Nodes
+### **Step 6: Run the Nodes**
 
 In two separate terminals, run the publisher and subscriber:
 
-###### Terminal 1: Publisher
+#### Terminal 1: Publisher
 
 ```bash
 source ~/ros2_ws/install/setup.bash
 ros2 run my_python_pkg simple_publisher
 ```
 
-##### Terminal 2: Subscriber
+#### Terminal 2: Subscriber
 
 ```bash
 source ~/ros2_ws/install/setup.bash
@@ -357,11 +357,11 @@ ros2 run my_python_pkg simple_subscriber
 
 ---
 
-### Track B - C++ Publisher-Subscriber Implementation
+## Track B - C++ Publisher-Subscriber Implementation
 
 To implement the **publisher and subscriber in C++** transmitting standard `Strings`, follow the steps below.
 
-##### Step 1: Create a C++ Package**
+### **Step 1: Create a C++ Package**
 
 Navigate to the `src/` directory:
 
@@ -387,7 +387,7 @@ my_cpp_pkg/
 
 ---
 
-##### Step 2: Write the Publisher Node (C++)
+### **Step 2: Write the Publisher Node (C++)**
 
 Create the file `simple_publisher.cpp` inside the `src` directory of the `my_cpp_pkg` package.
 
@@ -429,7 +429,7 @@ int main(int argc, char *argv[]) {
 
 ---
 
-##### Step 3: Write the Subscriber Node (C++)
+### **Step 3: Write the Subscriber Node (C++)**
 
 Create the file `simple_subscriber.cpp` inside the `src` directory of the `my_cpp_pkg` package.
 
@@ -464,7 +464,7 @@ int main(int argc, char *argv[]) {
 
 ---
 
-##### Step 4: Update `CMakeLists.txt`
+### **Step 4: Update `CMakeLists.txt`**
 
 Modify `CMakeLists.txt` to compile both the publisher and subscriber nodes.
 
@@ -494,7 +494,7 @@ ament_package()
 
 ---
 
-##### Step 5: Build and Source the Package (C)
+### **Step 5: Build and Source the Package (C++)**
 
 Build the package and source it:
 
@@ -506,7 +506,7 @@ source install/setup.bash
 
 ---
 
-##### Step 6: Run the Nodes (C)
+### **Step 6: Run the Nodes (C++)**
 
 Open two terminals and run the publisher and subscriber nodes.
 
@@ -524,9 +524,7 @@ source ~/ros2_ws/install/setup.bash
 ros2 run my_cpp_pkg simple_subscriber
 ```
 
----
-
-##### Expected Output (C)
+#### Expected Output (C++)
 
 - **Publisher Terminal:**
 
@@ -545,13 +543,13 @@ ros2 run my_cpp_pkg simple_subscriber
   ```
 
 
-### Required Behavior
+## Required Behavior
 
 * One node publishes a message at 1 Hz
 * One node subscribes and prints received messages
 * Topic name: `/ros2intro`
 
-### Concept Reinforcement
+## Concept Reinforcement
 
 * Nodes = independent processes
 * Topics = anonymous data buses
@@ -559,92 +557,852 @@ ros2 run my_cpp_pkg simple_subscriber
 
 ---
 
-## **Part 2 — ROS 2 CLI Introspection**
+# **Part 2 — ROS 2 CLI Introspection**
 
-### Objective
+## Objective
 
-Learn how to **debug and inspect live systems**—critical for racing robots.
+Learn how to **debug and inspect live systems**
 
-### Tasks
+## Tasks
 
-With both nodes running:
+With your nodes running, open a new terminal and execute:
 
-```bash
-ros2 node list
-ros2 topic list
-ros2 topic info /ros2intro
-ros2 topic echo /ros2intro
-```
-
-### Questions to Answer
-
-* How many publishers and subscribers exist?
-* What message type is used?
-* What happens if the subscriber starts before the publisher?
-
----
-
-## **Part 3 — Custom Message Types**
-
-### Objective
-
-Move beyond strings and create **structured robot data**.
-
-### Tasks
-
-1. Create a `msg/` directory in your package
-2. Define a custom message, for example:
-
-```text
-# RacingStatus.msg
-float32 speed
-float32 steering_angle
-bool emergency_stop
-```
-
-3. Update `package.xml`, `CMakeLists.txt` or `setup.py`
-4. Modify the publisher and subscriber to use this message
-
-### Racing Context
-
-This message represents a simplified **vehicle state interface**, similar to what later modules (control & planning) will consume.
-
----
-
-## **Part 4 — Launch Files (Multi-Node Systems)**
-
-### Objective
-
-Learn how ROS systems are **started and configured at scale**.
-
-### Tasks
-
-1. Create a `launch/` directory
-
-2. Write a launch file that:
-
-   * Starts the publisher
-   * Starts the subscriber
-   * Optionally sets a parameter (publish rate)
-
-3. Run using:
-
+1. **List all active nodes:**
    ```bash
-   ros2 launch <package_name> <launch_file>.py
+   ros2 node list
    ```
 
-### Why This Matters
+2. **Get detailed information about a node:**
+   ```bash
+   ros2 node info /simple_publisher
+   ros2 node info /simple_subscriber
+   ```
 
-A robotic stack may involve **10–20 nodes**—manual startup does not scale.
+3. **List all active topics:**
+   ```bash
+   ros2 topic list
+   ```
+
+4. **Get information about the `ros2intro` topic:**
+   ```bash
+   ros2 topic info /ros2intro
+   ```
+
+5. **Echo messages from the topic:**
+   ```bash
+   ros2 topic echo /ros2intro
+   ```
+
+6. **Check the publishing rate:**
+   ```bash
+   ros2 topic hz /ros2intro
+   ```
+
 
 ---
 
+# **Part 3 — Custom Message Types**
+
+## Overview
+
+Custom message types allow you to define your own data structures for communication between nodes. Instead of using only standard messages like String or Float32, you can create messages that bundle multiple fields together, making your code more organized and meaningful.
+
+## Understanding Custom Messages
+
+### Why Use Custom Messages?
+
+**Standard Message:**
+```python
+# Publishing speed as a Float32
+speed_msg = Float32()
+speed_msg.data = 25.5
+```
+
+**Custom Message:**
+```python
+# Publishing complete vehicle state
+vehicle_msg = VehicleState()
+vehicle_msg.speed = 25.5
+vehicle_msg.steering_angle = 15.0
+vehicle_msg.throttle = 0.8
+vehicle_msg.timestamp = self.get_clock().now().to_msg()
+```
+
+Custom messages are more **descriptive**, **organized**, and **maintainable** for complex robotic applications.
 
 ---
+
+## Creating a Custom Message - Step by Step
+
+### Step 1: Create a Package for Custom Messages
+
+It's best practice to create a separate package for custom messages so multiple packages can use them.
+
+```bash
+cd ~/ros2_ws/src
+ros2 pkg create my_custom_msgs --build-type ament_cmake
+```
+
+**Why `ament_cmake`?** Message generation requires CMake build system, even if your nodes are in Python.
+
+### Step 2: Create Message Directory and File
+
+```bash
+cd ~/ros2_ws/src/my_custom_msgs
+mkdir msg
+```
+
+Create your first custom message file:
+
+**File:** `~/ros2_ws/src/my_custom_msgs/msg/VehicleState.msg`
+
+```
+# VehicleState.msg
+# Custom message for vehicle state information
+
+float32 speed                  # Vehicle speed in m/s
+float32 steering_angle        # Steering angle in degrees
+float32 throttle              # Throttle position (0.0 to 1.0)
+builtin_interfaces/Time timestamp  # Timestamp of the measurement
+```
+
+**Message Field Types:**
+- Basic types: `bool`, `int8`, `int16`, `int32`, `int64`, `float32`, `float64`, `string`
+- Arrays: `float32[]` (dynamic), `float32[5]` (fixed size)
+- Other messages: `builtin_interfaces/Time`, `std_msgs/Header`
+
+### Step 3: Update package.xml
+
+Add the required dependencies to `~/ros2_ws/src/my_custom_msgs/package.xml`:
+
+```xml
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>my_custom_msgs</name>
+  <version>0.0.0</version>
+  <description>Custom message types for ROS2 tutorial</description>
+  <maintainer email="student@example.com">student</maintainer>
+  <license>Apache License 2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  
+  <!-- Add these dependencies for message generation -->
+  <build_depend>rosidl_default_generators</build_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
+  
+  <!-- Add dependency on builtin_interfaces for Time type -->
+  <depend>builtin_interfaces</depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>
+```
+
+### Step 4: Update CMakeLists.txt
+
+Update `~/ros2_ws/src/my_custom_msgs/CMakeLists.txt`:
+
+```cmake
+cmake_minimum_required(VERSION 3.8)
+project(my_custom_msgs)
+
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+# Find dependencies
+find_package(ament_cmake REQUIRED)
+find_package(rosidl_default_generators REQUIRED)
+find_package(builtin_interfaces REQUIRED)
+
+# Declare the message files to generate code for
+rosidl_generate_interfaces(${PROJECT_NAME}
+  "msg/VehicleState.msg"
+  DEPENDENCIES builtin_interfaces
+)
+
+if(BUILD_TESTING)
+  find_package(ament_lint_auto REQUIRED)
+  ament_lint_auto_find_test_dependencies()
+endif()
+
+ament_package()
+```
+
+### Step 5: Build the Message Package
+
+```bash
+cd ~/ros2_ws
+colcon build --packages-select my_custom_msgs
+source install/setup.bash
+```
+
+**Expected Output:**
+```
+Starting >>> my_custom_msgs
+Finished <<< my_custom_msgs [5.23s]
+
+Summary: 1 package finished [5.67s]
+```
+
+### Step 6: Verify Message Creation
+
+Check that your message was created:
+
+```bash
+ros2 interface show my_custom_msgs/msg/VehicleState
+```
+
+**Expected Output:**
+```
+float32 speed
+float32 steering_angle
+float32 throttle
+builtin_interfaces/Time timestamp
+        int32 sec
+        uint32 nanosec
+```
+
+---
+
+## Using Custom Messages in Python Nodes
+
+### Step 1: Update Python Package Dependencies
+
+Update `~/ros2_ws/src/my_python_pkg/package.xml` to add the custom message dependency:
+
+```xml
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>my_python_pkg</name>
+  <version>0.0.0</version>
+  <description>A simple publisher and subscriber example in ROS 2</description>
+  <maintainer email="student@example.com">student</maintainer>
+  <license>Apache License 2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>my_custom_msgs</depend>  <!-- Add this line -->
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
+```
+
+### Step 2: Create Custom Message Publisher
+
+**File:** `~/ros2_ws/src/my_python_pkg/my_python_pkg/custom_publisher.py`
+
+```python
+import rclpy
+from rclpy.node import Node
+from my_custom_msgs.msg import VehicleState
+import random
+import math
+
+class CustomPublisher(Node):
+    def __init__(self):
+        super().__init__('custom_publisher')
+        
+        # Create publisher for custom message type
+        self.publisher_ = self.create_publisher(
+            VehicleState, 
+            'vehicle_state', 
+            10)
+        
+        # Timer to publish at 2 Hz
+        self.timer = self.create_timer(0.5, self.publish_vehicle_state)
+        
+        # Simulation variables
+        self.simulation_time = 0.0
+        
+        self.get_logger().info('Custom Publisher started - Publishing VehicleState messages')
+
+    def publish_vehicle_state(self):
+        # Create custom message instance
+        msg = VehicleState()
+        
+        # Simulate varying vehicle state
+        self.simulation_time += 0.5
+        
+        # Speed varies between 10-30 m/s with some randomness
+        msg.speed = 20.0 + 10.0 * math.sin(self.simulation_time * 0.5) + random.uniform(-1, 1)
+        
+        # Steering angle varies between -30 and +30 degrees
+        msg.steering_angle = 15.0 * math.sin(self.simulation_time * 0.3) + random.uniform(-2, 2)
+        
+        # Throttle varies between 0.3 and 1.0
+        msg.throttle = 0.65 + 0.35 * math.sin(self.simulation_time * 0.4)
+        
+        # Add timestamp
+        msg.timestamp = self.get_clock().now().to_msg()
+        
+        # Publish the message
+        self.publisher_.publish(msg)
+        
+        # Log the published data
+        self.get_logger().info(
+            f'Publishing VehicleState: '
+            f'speed={msg.speed:.2f} m/s, '
+            f'steering={msg.steering_angle:.2f}°, '
+            f'throttle={msg.throttle:.2f}'
+        )
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = CustomPublisher()
+    
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Step 3: Create Custom Message Subscriber
+
+**File:** `~/ros2_ws/src/my_python_pkg/my_python_pkg/custom_subscriber.py`
+
+```python
+import rclpy
+from rclpy.node import Node
+from my_custom_msgs.msg import VehicleState
+
+class CustomSubscriber(Node):
+    def __init__(self):
+        super().__init__('custom_subscriber')
+        
+        # Create subscription for custom message type
+        self.subscription = self.create_subscription(
+            VehicleState,
+            'vehicle_state',
+            self.vehicle_state_callback,
+            10)
+        
+        self.subscription  # prevent unused variable warning
+        
+        self.get_logger().info('Custom Subscriber started - Listening for VehicleState messages')
+
+    def vehicle_state_callback(self, msg):
+        # Extract timestamp
+        timestamp_sec = msg.timestamp.sec + msg.timestamp.nanosec * 1e-9
+        
+        # Analyze the vehicle state
+        speed_status = self.analyze_speed(msg.speed)
+        steering_status = self.analyze_steering(msg.steering_angle)
+        throttle_status = self.analyze_throttle(msg.throttle)
+        
+        # Log received data with analysis
+        self.get_logger().info(
+            f'Received VehicleState:\n'
+            f'  Speed: {msg.speed:.2f} m/s ({speed_status})\n'
+            f'  Steering: {msg.steering_angle:.2f}° ({steering_status})\n'
+            f'  Throttle: {msg.throttle:.2f} ({throttle_status})\n'
+            f'  Timestamp: {timestamp_sec:.2f}s'
+        )
+    
+    def analyze_speed(self, speed):
+        """Provide context about speed"""
+        if speed < 15:
+            return "SLOW"
+        elif speed < 25:
+            return "MODERATE"
+        else:
+            return "FAST"
+    
+    def analyze_steering(self, angle):
+        """Provide context about steering"""
+        if abs(angle) < 5:
+            return "STRAIGHT"
+        elif abs(angle) < 15:
+            return "GENTLE TURN"
+        else:
+            return "SHARP TURN"
+    
+    def analyze_throttle(self, throttle):
+        """Provide context about throttle"""
+        if throttle < 0.4:
+            return "LOW"
+        elif throttle < 0.7:
+            return "MEDIUM"
+        else:
+            return "HIGH"
+
+def main(args=None):
+    rclpy.init(args=args)
+    node = CustomSubscriber()
+    
+    try:
+        rclpy.spin(node)
+    except KeyboardInterrupt:
+        pass
+    finally:
+        node.destroy_node()
+        rclpy.shutdown()
+
+if __name__ == '__main__':
+    main()
+```
+
+### Step 4: Update setup.py
+
+Update `~/ros2_ws/src/my_python_pkg/setup.py` to include the new executables:
+
+```python
+from setuptools import setup
+
+package_name = 'my_python_pkg'
+
+setup(
+    name=package_name,
+    version='0.0.0',
+    packages=[package_name],
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='student',
+    maintainer_email='student@example.com',
+    description='A simple publisher and subscriber example in ROS 2',
+    license='Apache License 2.0',
+    tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            'simple_publisher = my_python_pkg.simple_publisher:main',
+            'simple_subscriber = my_python_pkg.simple_subscriber:main',
+            'custom_publisher = my_python_pkg.custom_publisher:main',
+            'custom_subscriber = my_python_pkg.custom_subscriber:main',
+        ],
+    },
+)
+```
+
+### Step 5: Build and Test
+
+```bash
+cd ~/ros2_ws
+colcon build --packages-select my_python_pkg
+source install/setup.bash
+```
+
+**Terminal 1 - Run Custom Publisher:**
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 run my_python_pkg custom_publisher
+```
+
+**Expected Output:**
+```
+[INFO] [custom_publisher]: Custom Publisher started - Publishing VehicleState messages
+[INFO] [custom_publisher]: Publishing VehicleState: speed=20.45 m/s, steering=2.34°, throttle=0.78
+[INFO] [custom_publisher]: Publishing VehicleState: speed=24.23 m/s, steering=5.67°, throttle=0.85
+[INFO] [custom_publisher]: Publishing VehicleState: speed=28.91 m/s, steering=-1.23°, throttle=0.92
+[INFO] [custom_publisher]: Publishing VehicleState: speed=26.45 m/s, steering=-8.45°, throttle=0.88
+```
+
+**Terminal 2 - Run Custom Subscriber:**
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 run my_python_pkg custom_subscriber
+```
+
+**Expected Output:**
+```
+[INFO] [custom_subscriber]: Custom Subscriber started - Listening for VehicleState messages
+[INFO] [custom_subscriber]: Received VehicleState:
+  Speed: 20.45 m/s (MODERATE)
+  Steering: 2.34° (STRAIGHT)
+  Throttle: 0.78 (HIGH)
+  Timestamp: 1735411234.56s
+[INFO] [custom_subscriber]: Received VehicleState:
+  Speed: 24.23 m/s (MODERATE)
+  Steering: 5.67° (GENTLE TURN)
+  Throttle: 0.85 (HIGH)
+  Timestamp: 1735411235.06s
+```
+
+---
+
+# **Part 4 — Launch Files (Multi-Node Systems)**
+
+## Overview
+
+Launch files allow you to start multiple nodes simultaneously with a single command. Instead of opening multiple terminals and running each node individually, you can configure and launch your entire system at once. This is essential for complex robotic systems
+
+## Understanding Launch Files
+
+### Why Use Launch Files?
+
+**Without Launch Files:**
+```bash
+# Terminal 1
+ros2 run my_python_pkg simple_publisher
+
+# Terminal 2
+ros2 run my_python_pkg simple_subscriber
+
+# Terminal 3
+ros2 run my_python_pkg custom_publisher
+
+# Terminal 4
+ros2 run my_python_pkg custom_subscriber
+```
+
+**With Launch Files:**
+```bash
+# Single terminal
+ros2 launch my_python_pkg all_nodes_launch.py
+```
+
+### Benefits of Launch Files:
+- Start multiple nodes with one command
+- Configure parameters for nodes
+- Set remapping rules for topics
+- Organize complex systems
+- Reproducible system startup
+- Easier testing and debugging
+
+---
+
+## Python Launch Files
+
+### Step 1: Create Launch Directory
+
+```bash
+cd ~/ros2_ws/src/my_python_pkg
+mkdir launch
+```
+
+### Step 2: Create Simple Launch File
+
+**File:** `~/ros2_ws/src/my_python_pkg/launch/simple_nodes_launch.py`
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    """Launch simple publisher and subscriber nodes"""
+    
+    return LaunchDescription([
+        # Launch simple publisher node
+        Node(
+            package='my_python_pkg',
+            executable='simple_publisher',
+            name='simple_publisher',
+            output='screen',
+            emulate_tty=True,
+        ),
+        
+        # Launch simple subscriber node
+        Node(
+            package='my_python_pkg',
+            executable='simple_subscriber',
+            name='simple_subscriber',
+            output='screen',
+            emulate_tty=True,
+        ),
+    ])
+```
+
+**Explanation of Parameters:**
+- `package`: The ROS2 package containing the executable
+- `executable`: The name of the node executable (from setup.py entry_points)
+- `name`: The name the node will use (can override the node's internal name)
+- `output='screen'`: Display node output in the terminal
+- `emulate_tty=True`: Ensures colored output and proper formatting
+
+
+### Step 3: Create Custom Messages Launch File
+
+**File:** `~/ros2_ws/src/my_python_pkg/launch/custom_nodes_launch.py`
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+
+def generate_launch_description():
+    """Launch custom message publisher and subscriber nodes"""
+    
+    return LaunchDescription([
+        # Launch custom publisher node
+        Node(
+            package='my_python_pkg',
+            executable='custom_publisher',
+            name='custom_publisher',
+            output='screen',
+            emulate_tty=True,
+        ),
+        
+        # Launch custom subscriber node
+        Node(
+            package='my_python_pkg',
+            executable='custom_subscriber',
+            name='custom_subscriber',
+            output='screen',
+            emulate_tty=True,
+        ),
+    ])
+```
+
+### Step 4: Create Comprehensive Launch File (All Nodes)
+
+**File:** `~/ros2_ws/src/my_python_pkg/launch/all_nodes_launch.py`
+
+```python
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument, LogInfo
+from launch.substitutions import LaunchConfiguration
+
+def generate_launch_description():
+    """
+    Launch all publisher and subscriber nodes:
+    - Simple string message nodes
+    - Custom VehicleState message nodes
+    """
+    
+    return LaunchDescription([
+        # Log info message
+        LogInfo(msg="Starting all ROS2 tutorial nodes..."),
+        
+        # Simple Publisher (String messages)
+        Node(
+            package='my_python_pkg',
+            executable='simple_publisher',
+            name='simple_publisher',
+            output='screen',
+            emulate_tty=True,
+            parameters=[],
+        ),
+        
+        # Simple Subscriber (String messages)
+        Node(
+            package='my_python_pkg',
+            executable='simple_subscriber',
+            name='simple_subscriber',
+            output='screen',
+            emulate_tty=True,
+            parameters=[],
+        ),
+        
+        # Custom Publisher (VehicleState messages)
+        Node(
+            package='my_python_pkg',
+            executable='custom_publisher',
+            name='custom_publisher',
+            output='screen',
+            emulate_tty=True,
+            parameters=[],
+        ),
+        
+        # Custom Subscriber (VehicleState messages)
+        Node(
+            package='my_python_pkg',
+            executable='custom_subscriber',
+            name='custom_subscriber',
+            output='screen',
+            emulate_tty=True,
+            parameters=[],
+        ),
+        
+        LogInfo(msg="All nodes launched successfully!"),
+    ])
+```
+
+### Step 5: Update setup.py to Include Launch Files
+
+**File:** `~/ros2_ws/src/my_python_pkg/setup.py`
+
+```python
+from setuptools import setup
+import os
+from glob import glob
+
+package_name = 'my_python_pkg'
+
+setup(
+    name=package_name,
+    version='0.0.0',
+    packages=[package_name],
+    data_files=[
+        ('share/ament_index/resource_index/packages',
+            ['resource/' + package_name]),
+        ('share/' + package_name, ['package.xml']),
+        # Include launch files
+        (os.path.join('share', package_name, 'launch'), 
+            glob(os.path.join('launch', '*launch.[pxy][yma]*'))),
+    ],
+    install_requires=['setuptools'],
+    zip_safe=True,
+    maintainer='student',
+    maintainer_email='student@example.com',
+    description='A simple publisher and subscriber example in ROS 2',
+    license='Apache License 2.0',
+    tests_require=['pytest'],
+    entry_points={
+        'console_scripts': [
+            'simple_publisher = my_python_pkg.simple_publisher:main',
+            'simple_subscriber = my_python_pkg.simple_subscriber:main',
+            'custom_publisher = my_python_pkg.custom_publisher:main',
+            'custom_subscriber = my_python_pkg.custom_subscriber:main',
+        ],
+    },
+)
+```
+
+### Step 6: Update package.xml for Launch Dependencies
+
+**File:** `~/ros2_ws/src/my_python_pkg/package.xml`
+
+Add these dependencies if not already present:
+
+```xml
+  <exec_depend>ros2launch</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+```
+
+Complete package.xml should look like:
+
+```xml
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>my_python_pkg</name>
+  <version>0.0.0</version>
+  <description>A simple publisher and subscriber example in ROS 2</description>
+  <maintainer email="student@example.com">student</maintainer>
+  <license>Apache License 2.0</license>
+
+  <depend>rclpy</depend>
+  <depend>std_msgs</depend>
+  <depend>my_custom_msgs</depend>
+  
+  <!-- Launch file dependencies -->
+  <exec_depend>ros2launch</exec_depend>
+  <exec_depend>launch</exec_depend>
+  <exec_depend>launch_ros</exec_depend>
+
+  <test_depend>ament_copyright</test_depend>
+  <test_depend>ament_flake8</test_depend>
+  <test_depend>ament_pep257</test_depend>
+  <test_depend>python3-pytest</test_depend>
+
+  <export>
+    <build_type>ament_python</build_type>
+  </export>
+</package>
+```
+
+### Step 7: Build and Test Launch Files
+
+```bash
+cd ~/ros2_ws
+colcon build --packages-select my_python_pkg
+source install/setup.bash
+```
+
+### Step 8: Run Launch Files
+
+**Launch simple nodes only:**
+```bash
+ros2 launch my_python_pkg simple_nodes_launch.py
+```
+
+**Expected Output:**
+```
+[INFO] [launch]: All log files can be found below /home/student/.ros/log/2024-01-02-12-34-56-789012-ubuntu-12345
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [simple_publisher-1]: process started with pid [12346]
+[INFO] [simple_subscriber-2]: process started with pid [12347]
+[simple_publisher-1] [INFO] [1735411234.123456789] [simple_publisher]: Publishing: "Hello ROS 2: 0"
+[simple_subscriber-2] [INFO] [1735411234.123456789] [simple_subscriber]: Received: "Hello ROS 2: 0"
+[simple_publisher-1] [INFO] [1735411235.123456789] [simple_publisher]: Publishing: "Hello ROS 2: 1"
+[simple_subscriber-2] [INFO] [1735411235.123456789] [simple_subscriber]: Received: "Hello ROS 2: 1"
+```
+
+**Launch custom message nodes only:**
+```bash
+ros2 launch my_python_pkg custom_nodes_launch.py
+```
+
+**Launch all nodes:**
+```bash
+ros2 launch my_python_pkg all_nodes_launch.py
+```
+
+**Expected Output:**
+```
+[INFO] [launch]: All log files can be found below /home/student/.ros/log/2024-01-02-12-34-56-789012-ubuntu-12345
+[INFO] [launch]: Default logging verbosity is set to INFO
+[INFO] [launch.user]: Starting all ROS2 tutorial nodes...
+[INFO] [simple_publisher-1]: process started with pid [12346]
+[INFO] [simple_subscriber-2]: process started with pid [12347]
+[INFO] [custom_publisher-3]: process started with pid [12348]
+[INFO] [custom_subscriber-4]: process started with pid [12349]
+[INFO] [launch.user]: All nodes launched successfully!
+[simple_publisher-1] [INFO] [1735411234.123456789] [simple_publisher]: Publishing: "Hello ROS 2: 0"
+[simple_subscriber-2] [INFO] [1735411234.123456789] [simple_subscriber]: Received: "Hello ROS 2: 0"
+[custom_publisher-3] [INFO] [1735411234.567890123] [custom_publisher]: Publishing VehicleState: speed=22.45 m/s, steering=3.21°, throttle=0.78
+[custom_subscriber-4] [INFO] [1735411234.567890123] [custom_subscriber]: Received VehicleState:
+[custom_subscriber-4]   Speed: 22.45 m/s (MODERATE)
+[custom_subscriber-4]   Steering: 3.21° (STRAIGHT)
+[custom_subscriber-4]   Throttle: 0.78 (HIGH)
+[custom_subscriber-4]   Timestamp: 1735411234.57s
+```
+
+**To stop all nodes:** Press `Ctrl+C` in the terminal
+
+---
+
+# Multi-Node Communication System - Data Processing Pipeline
+
+Design and implement a simple multi-node system with the following architecture:
+
+```
+[Sensor Node] --> /raw_data --> [Processing Node] --> /processed_data --> [Display Node]
+```
+
+## **Requirements:**
+
+1. **Sensor Node**: Publishes simulated or random sensor readings (e.g., temperature values, speed, etc..) to `/raw_data`
+2. **Processing Node**: Subscribes to `/raw_data`, applies a simple transformation (e.g., Celsius to Fahrenheit, kilometers to miles, etc..), and publishes to `/processed_data`
+3. **Display Node**: Subscribes to `/processed_data` and displays the results
+4. **Custom Data Type**: Create at least one custom data types to be used by one or more of the nodes
+5. **Launch File**: Create a launch file that runs all of the required nodes and set parameters if needed
+6. **Screenshots**: Collect screenshots showing the entire system running properly
+
+## **Implementation Notes:**
+
+- You can implement this in Python or C++ (or mix both)
+- Create these nodes in your existing package or create a new package
+- Use appropriate message types (e.g., `std_msgs/Float32` for numeric data)
 
 ## **Submission Deliverables**
 
-Submit **one ZIP or repository link** containing:
+Submit **one ZIP file** containing:
 
 ### Required Items
 
@@ -653,24 +1411,21 @@ Submit **one ZIP or repository link** containing:
    * Publisher and subscriber nodes
    * Custom message definition
    * Launch file
+
 2. **Screenshots**
 
    * `ros2 node list`
    * `ros2 topic echo`
    * Successful launch file execution
-3. **Short Reflection** (PDF or Markdown)
 
-
----
 
 ## **Grading Rubric (100 Points)**
 
 | Category                           | Points |
 | ---------------------------------- | ------ |
-| Workspace builds & runs            | 10     |
 | Publisher/subscriber functionality | 30     |
-| ROS 2 CLI usage & screenshots      | 15     |
 | Custom message implementation      | 25     |
 | Launch file (multi-node system)    | 20     |
-
+| ROS 2 CLI usage & screenshots      | 15     |
+| Well organized submission, well formatted codes          | 10     |
 
