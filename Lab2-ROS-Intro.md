@@ -1,4 +1,4 @@
-# **Lab 2 — Introduction to ROS 2 and Robotics Middleware**
+# **Lab 2 - Introduction to ROS 2 and Robotics Middleware**
 
 ## Lab Overview
 
@@ -58,7 +58,7 @@ ros2_ws/
 
 ---
 
-# **Part 0 — Environment Setup & Workspace**
+# **Part 0 - Environment Setup & Workspace**
 
 ## Objective
 
@@ -86,7 +86,7 @@ ros2_ws/
 
 ---
 
-# **Part 1 — Publisher & Subscriber Nodes**
+# **Part 1 - Publisher & Subscriber Nodes**
 
 ## Objective
 
@@ -557,7 +557,7 @@ ros2 run my_cpp_pkg simple_subscriber
 
 ---
 
-# **Part 2 — ROS 2 CLI Introspection**
+# **Part 2 - ROS 2 CLI Introspection**
 
 ## Objective
 
@@ -601,7 +601,7 @@ With your nodes running, open a new terminal and execute:
 
 ---
 
-# **Part 3 — Custom Message Types**
+# **Part 3 - Custom Message Types**
 
 ## Overview
 
@@ -1044,7 +1044,7 @@ ros2 run my_python_pkg custom_subscriber
 
 ---
 
-# **Part 4 — Launch Files (Multi-Node Systems)**
+# **Part 4 - Launch Files (Multi-Node Systems)**
 
 ## Overview
 
