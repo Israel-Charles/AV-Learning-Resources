@@ -1377,7 +1377,9 @@ ros2 launch my_python_pkg all_nodes_launch.py
 
 ---
 
-# Multi-Node Communication System - Data Processing Pipeline
+# **Deliverable**
+
+## Multi-Node Communication System - Data Processing Pipeline
 
 Design and implement a simple multi-node system with the following architecture:
 
@@ -1385,7 +1387,7 @@ Design and implement a simple multi-node system with the following architecture:
 [Sensor Node] --> /raw_data --> [Processing Node] --> /processed_data --> [Display Node]
 ```
 
-## **Requirements:**
+### **Requirements:**
 
 1. **Sensor Node**: Publishes simulated or random sensor readings (e.g., temperature values, speed, etc..) to `/raw_data`
 2. **Processing Node**: Subscribes to `/raw_data`, applies a simple transformation (e.g., Celsius to Fahrenheit, kilometers to miles, etc..), and publishes to `/processed_data`
@@ -1394,15 +1396,40 @@ Design and implement a simple multi-node system with the following architecture:
 5. **Launch File**: Create a launch file that runs all of the required nodes and set parameters if needed
 6. **Screenshots**: Collect screenshots showing the entire system running properly
 
-## **Implementation Notes:**
+### **Implementation Notes:**
 
 - You can implement this in Python or C++ (or mix both)
 - Create these nodes in your existing package or create a new package
 - Use appropriate message types (e.g., `std_msgs/Float32` for numeric data)
 
-## **Submission Deliverables**
+### **Submission Deliverables**
 
-Submit **one ZIP file** containing:
+1. **Submit only the `src` folder** from your ROS 2 workspace.
+
+   * All of your work **must be contained inside this `src` folder**.
+   * Do **not** include `build/`, `install/`, or `log/` directories.
+
+2. **Make sure all required packages, nodes, launch files, and config files** needed to run your assignment are inside the `src` folder.
+
+3. **Include a `README.md` file inside the `src` folder** that clearly explains:
+
+   * What you implemented for the assignment
+   * How to build the workspace
+   * How to run your code (exact commands)
+
+4. **Zip the `src` folder only** (not the full workspace).
+
+5. **Name the ZIP file exactly as follows:**
+
+   ```
+   first-name_last-name_studentID.zip
+   ```
+
+   Example:
+
+   ```
+   jane_doe_12345678.zip
+   ```
 
 ### Required Items
 
@@ -1413,7 +1440,8 @@ Submit **one ZIP file** containing:
    * Launch file
 
 2. **Screenshots**
-
+   Withing the `src` folder, create a folder named `screenshots` and include the output of the following:
+   
    * `ros2 node list`
    * `ros2 topic echo`
    * Successful launch file execution
