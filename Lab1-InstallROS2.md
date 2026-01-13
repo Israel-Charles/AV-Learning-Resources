@@ -238,7 +238,7 @@ sudo apt upgrade
 
 # **Deliverable**
 
-### Run a Talker/Listener Test:
+## Run a Talker/Listener Test:
 
 Open **Terminal 1**:
 
