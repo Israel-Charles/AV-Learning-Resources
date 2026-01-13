@@ -1422,13 +1422,13 @@ Design and implement a simple multi-node system with the following architecture:
 5. **Name the ZIP file exactly as follows:**
 
    ```
-   first-name_last-name_studentID.zip
+   first-name_last-name_studentID_lab#.zip
    ```
 
    Example:
 
    ```
-   jane_doe_12345678.zip
+   jane_doe_1234567_lab2.zip
    ```
 
 ### Required Items
