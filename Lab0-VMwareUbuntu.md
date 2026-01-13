@@ -265,3 +265,15 @@ After reboot, confirm:
 * Installing Ubuntu in a VM **does not affect your real operating system**
 * Apple Silicon Macs require **ARM-based Linux**
 * Using Ubuntu Server + desktop is **fully supported and standard practice**
+
+# **Deliverable**
+
+## Verify Ubuntu Version
+
+Open a terminal in your Ubuntu 22 environment and run:
+
+```bash
+lsb_release -a
+```
+
+- **Submit a screenshot of the output**
