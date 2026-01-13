@@ -777,8 +777,9 @@ ros2 topic echo /turtle1/pose
 - Recording and analyzing test runs
 - Developing and testing algorithms offline
 
+---
 
-### Common Issues and Solutions
+## Common Issues and Solutions
 
 **Issue:** RViz doesn't show TF frames
 - **Solution:** Check that Fixed Frame is set to "world"
@@ -800,3 +801,129 @@ ros2 topic echo /turtle1/pose
 - Check that bag contains expected topics
 
 ---
+
+# Deliverable
+
+## Integrated TurtleSim Visualization and Recording System
+
+### Objective
+Create a comprehensive ROS2 launch file that integrates all visualization and debugging tools learned in this lab to demonstrate a complete robotic system workflow: control, visualization, recording, and playback.
+
+---
+
+### Overview
+
+You will create a launch file that orchestrates a demonstration of TurtleSim with the following sequence:
+
+1. **System Startup:** All required nodes and visualization tools launch automatically
+2. **Live Operation Phase (~20 seconds):** User controls turtle1 with keyboard while:
+   - RViz2 displays turtle1's movement relative to turtle2
+   - rqt shows real-time plots of turtle1's position/velocity
+   - rqt displays tf transform information (turtle1 → world)
+   - rosbag2 records keyboard commands
+3. **Playback Phase:** After recording stops, rosbag automatically replays commands at 2x speed while all visualization tools continue displaying the data
+
+---
+
+### Detailed Requirements
+
+#### 1. Launch File Specifications
+
+Create a launchfile that launches:
+
+**Core Nodes:**
+- TurtleSim node
+- Keyboard teleoperation node for turtle1
+- A second turtle (turtle2) spawned at a specific location
+
+**Visualization Tools:**
+- **rqt with at least two configurations:**
+  - **Window 1:** Plot display showing at least one turtle1 metric (pose/x, pose/y, linear_velocity, or angular_velocity, etc...)
+  - **Window 2:** TF tree or echo display showing transform from turtle1 with respect to world frame
+  
+- **RViz2** configured to display:
+  - Both turtle1 and turtle2 coordinate frames
+  - Visual representation showing turtle1's movement relative to turtle2
+  - Appropriate fixed frame and display settings
+
+**Recording and Playback:**
+- **rosbag2** that:
+  - Records `/turtle1/cmd_vel` (keyboard commands) for approximately 20 seconds
+  - Automatically stops recording after the time limit
+  - Automatically replays the recorded commands at 2x speed
+  - Keeps all visualization windows active during both recording and playback phases
+
+#### 2. Implementation Options
+
+You may choose **either** approach:
+
+**Option A: Pre-configured Files**
+- Create and save RViz configuration file (ex: `turtlesim_demo.rviz`)
+- Create and save rqt perspective files for both windows
+- Launch file loads these configurations
+
+**Option B: Programmatic Configuration**
+- Use launch file commands/arguments to configure rqt and RViz
+- Can use `ExecuteProcess` with command-line arguments to set up displays
+- No separate configuration files needed
+
+#### 3. User Experience Requirements
+
+The system must provide clear feedback:
+- Terminal messages or something obvious that indicates current phase (Recording/Playback)
+- Countdown or timer showing, anything that shows recording progress
+- Clear indication when playback begins
+- All visualisation windows remain active throughout the entire demonstration
+- **System should run autonomously** after initial launch (minimal user intervention needed except for controlling turtle1)
+
+---
+
+### Workflow Summary
+
+```
+[Launch] → [Spawn turtle2] → [Open visualizations] → [User instructions] →
+[Start recording] → [User drives turtle1 for 20s] → [Stop recording] →
+[Playback at 2x speed] → [Complete]
+```
+
+### **Submission Deliverables**
+
+1. **Submit only the `src` folder** from your ROS 2 workspace.
+
+   * All of your work **must be contained inside this `src` folder**.
+   * Do **not** include `build/`, `install/`, or `log/` directories.
+
+2. **Make sure all required packages, nodes, launch files, and config files** needed to run your assignment are inside the `src` folder.
+
+3. **Include a `README.md` file inside the `src` folder** that clearly explains:
+
+   * What you implemented for the assignment
+   * How to build the workspace
+   * How to run your code (exact commands)
+
+4. **Zip the `src` folder only** (not the full workspace).
+
+5. **Name the ZIP file exactly as follows:**
+
+   ```
+   first-name_last-name_studentID_lab#.zip
+   ```
+
+   Example:
+
+   ```
+   jane_doe_1234567_lab2.zip
+   ```
+
+---
+
+## **Grading Rubric (100 Points)**
+
+| Category                           | Points |
+| ---------------------------------- | ------ |
+| Fully functioning launch file | 30     |
+| Proper `rviz2` usage      | 15     |
+| Proper `rqt` usage    | 15     |
+| Proper `tf2` usage      | 15     |
+| Proper `rosbag` usage      | 15     |
+| Well organized submission, well formatted codes          | 10     |
