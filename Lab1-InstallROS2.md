@@ -236,7 +236,7 @@ sudo apt upgrade
 ---
 ---
 
-## **Deliverable**
+# **Deliverable**
 
 ### Run a Talker/Listener Test:
 
@@ -252,4 +252,5 @@ Open **Terminal 2**:
 ros2 run demo_nodes_py listener
 ```
 
-### **Submit a screenshot of the `listener` node output showing what it heard from the `talker` node**
+- **Submit a screenshot of the `talker` node output showing what it published**
+- **Submit a screenshot of the `listener` node output showing what it heard from the `talker` node**
