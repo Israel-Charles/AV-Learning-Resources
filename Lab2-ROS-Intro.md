@@ -125,7 +125,7 @@ Understand **nodes, topics, and messages** through hands-on implementation.
     my_python_pkg/
     ├── package.xml # file containing meta information about the package
     ├── setup.py # containing instructions for how to install the package
-    ├── setup.cfg # required when a package has executables, so ros2 run can find them
+    ├── setup.cfg # optional; can define entry_points and metadata instead of setup.py
     ├── resource/
     │   └── my_python_pkg # marker file for the package
     └── my_python_pkg/ # a directory with the same name as your package, used by ROS 2 tools to find your package, contains __init__.py
