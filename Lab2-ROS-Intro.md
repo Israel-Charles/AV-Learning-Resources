@@ -1445,7 +1445,7 @@ Design and implement a simple multi-node system with the following architecture:
    Withing the `src` folder, create a folder named `screenshots` and include the output of the following:
    
    * `ros2 node list`
-   * `ros2 topic echo`
+   * `ros2 topic list`
    * Successful launch file execution
 
 
