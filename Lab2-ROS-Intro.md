@@ -274,7 +274,7 @@ if __name__ == '__main__':
 
 ### **Step 4: Update the Setup Configuration**
 
-Modify `setup.py` to install your nodes.
+Modify `setup.py` to point to your nodes.
 
 **File:** `~/ros2_ws/src/my_python_pkg/setup.py`
 
