@@ -504,6 +504,8 @@ colcon build --packages-select my_cpp_pkg
 source install/setup.bash
 ```
 
+> `--packages-select`: to select a specific package to build instead of all of the packages in the workspace
+
 ---
 
 ### **Step 6: Run the Nodes (C++)**
