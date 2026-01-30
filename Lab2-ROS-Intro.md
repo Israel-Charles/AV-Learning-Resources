@@ -257,9 +257,9 @@ def main(args=None):
     finally:
         # Once we are done spinning or have been interrupted, we destroy the node to clean up resources.
         node.destroy_node()
-        
-        # Shut down the rclpy library, releasing all ROS2-related resources.
-        rclpy.shutdown()
+        if rclpy.ok():  # Only shutdown if not already shutting down; Prevent "shutdown already called" on Ctrl-C
+           # Shut down the rclpy library, releasing all ROS2-related resources.
+           rclpy.shutdown()
 
 # The standard Python entry point for executable scripts.
 # If this script is run directly (e.g., 'python3 subscriber.py'), execute the main() function.
