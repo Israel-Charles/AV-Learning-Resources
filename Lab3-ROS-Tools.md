@@ -292,6 +292,8 @@ rqt
 1. Go to: **Plugins → Introspection → Node Graph**
 2. Observe the visual representation of nodes and topics
 
+> **Might need to click "Refresh" to make the graph show**
+
 **What you should see:**
 - Nodes: `/turtlesim` and `/teleop_turtle` (if running)
 - Topics: `/turtle1/cmd_vel` connecting them
