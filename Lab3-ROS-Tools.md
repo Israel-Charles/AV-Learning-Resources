@@ -831,7 +831,7 @@ You will create a launch file that orchestrates a demonstration of TurtleSim wit
 2. **Live Operation Phase (~20 seconds):** User controls turtle1 with keyboard while:
    - RViz2 displays turtle1's movement relative to turtle2
    - rqt shows real-time plots of turtle1's position/velocity
-   - rqt displays tf transform information (turtle1 → world)
+   - tf echoes tf transform information (turtle1 → world)
    - rosbag2 records keyboard commands
 3. **Playback Phase:** After recording stops, rosbag automatically replays commands at 2x speed while all visualization tools continue displaying the data
 
@@ -846,12 +846,10 @@ Create a launchfile that launches:
 **Core Nodes:**
 - TurtleSim node
 - Keyboard teleoperation node for turtle1
-- A second turtle (turtle2) spawned at a specific location
 
 **Visualization Tools:**
-- **rqt with at least two configurations:**
+- **rqt with at least one configuration:**
   - **Window 1:** Plot display showing at least one turtle1 metric (pose/x, pose/y, linear_velocity, or angular_velocity, etc...)
-  - **Window 2:** TF tree or echo display showing transform from turtle1 with respect to world frame
   
 - **RViz2** configured to display:
   - Both turtle1 and turtle2 coordinate frames
@@ -886,15 +884,15 @@ The system must provide clear feedback:
 - Countdown or timer showing, anything that shows recording progress
 - Clear indication when playback begins
 - All visualisation windows remain active throughout the entire demonstration
-- **System should run autonomously** after initial launch (minimal user intervention needed except for controlling turtle1)
+- **System should run autonomously** after initial launch (minimal user intervention needed except for controlling turtle1) and exit the system if needed
 
 ---
 
 ### Workflow Summary
 
 ```
-[Launch] → [Spawn turtle2] → [Open visualizations] → [User instructions] →
-[Start recording] → [User drives turtle1 for 20s] → [Stop recording] →
+[Launch] → [Open visualizations] → [User instructions] →
+[Start recording] → [User drives turtle1 for about 20s] → [Stop recording] →
 [Playback at 2x speed] → [Complete]
 ```
 
