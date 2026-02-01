@@ -244,6 +244,17 @@ ros2 service call /clear std_srvs/srv/Empty
 ros2 service call /spawn turtlesim/srv/Spawn "{x: 2.0, y: 2.0, theta: 0.0, name: 'turtle2'}"
 ```
 
+** Run the teleop (teleoperation) node and remap the control topic to control turtle2:**
+```
+ros2 run turtlesim turtle_teleop_key --ros-args -r /turtle1/cmd_vel:=/turtle2/cmd_vel
+```
+
+> --ros-args → says that this is ROS-specific arguments (not regular Linux args)
+> -r → remap
+> /turtle1/cmd_vel → original topic the node thinks it’s publishing to
+> :=
+> /turtle2/cmd_vel → new topic it will actually publish to
+
 **Change pen color:**
 ```bash
 ros2 service call /turtle1/set_pen turtlesim/srv/SetPen "{r: 255, g: 0, b: 0, width: 3, 'off': 0}"
