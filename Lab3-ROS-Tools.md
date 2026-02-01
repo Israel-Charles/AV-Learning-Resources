@@ -249,11 +249,11 @@ ros2 service call /spawn turtlesim/srv/Spawn "{x: 2.0, y: 2.0, theta: 0.0, name:
 ros2 run turtlesim turtle_teleop_key --ros-args -r /turtle1/cmd_vel:=/turtle2/cmd_vel
 ```
 
-> --ros-args → says that this is ROS-specific arguments (not regular Linux args)
-> -r → remap
-> /turtle1/cmd_vel → original topic the node thinks it’s publishing to
-> :=
-> /turtle2/cmd_vel → new topic it will actually publish to
+> - --ros-args → says that this is ROS-specific arguments (not regular Linux args)
+> - -r → remap
+> - /turtle1/cmd_vel → original topic the node thinks it’s publishing to
+> - := → remapping version of equal
+> - /turtle2/cmd_vel → new topic it will actually publish to
 
 **Change pen color:**
 ```bash
