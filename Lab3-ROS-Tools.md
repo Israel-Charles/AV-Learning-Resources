@@ -131,8 +131,23 @@ Subscription count: 1
 
 **Check message structure:**
 ```bash
-ros2 interface show /turtle1/cmd_vel
+ros2 interface show geometry_msgs/msg/Twist
 ```
+
+**Expected Output:**
+```
+# This expresses velocity in free space broken into its linear and angular parts.
+
+Vector3  linear
+	float64 x
+	float64 y
+	float64 z
+Vector3  angular
+	float64 x
+	float64 y
+	float64 z
+```
+
 
 ### Step 1.5: Control Turtle Programmatically
 
