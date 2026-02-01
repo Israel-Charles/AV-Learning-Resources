@@ -392,16 +392,32 @@ ros2 topic pub --rate 1 /turtle1/cmd_vel geometry_msgs/msg/Twist "{linear: {x: 1
 
 `tf2` is ROS2's transform library. It manages coordinate frames and transformations between them, essential for robots with multiple sensors and moving parts.
 
+### Step 3.0: Setting Up TF2 with TurtleSim
+
+By default, `turtlesim_node` runs on its own and does not publish any TF2 transforms - it only publishes the turtle's pose as a topic. The `turtle_tf2_py` package adds a TF2 broadcaster on top of turtlesim, which listens to that pose topic and converts it into a coordinate frame transform that the rest of the ROS2 ecosystem can use. Without it, tools like `tf2_echo` have nothing to listen to.
+
+First, install the package:
+
+```bash
+sudo apt install ros-humble-turtle-tf2-py
+```
+
+Then launch the demo. This single command starts turtlesim, spawns the turtles, and starts the TF2 broadcaster all together:
+
+```bash
+ros2 launch turtle_tf2_py turtle_tf2_demo.launch.py
+```
+
 ### Step 3.1: Understanding TurtleSim's Coordinate Frame
 
-TurtleSim creates a transform from `world` to `turtle1` (and any other spawned turtles).
+Open a new terminal. The TF2 broadcaster is now publishing a transform from `world` to `turtle1`, so we can query it in real time:
 
-**View available transforms:**
 ```bash
 ros2 run tf2_ros tf2_echo world turtle1
 ```
 
-**Expected Output:**
+Expected Output:
+
 ```
 At time 1735411234.567
 - Translation: [5.544, 5.544, 0.000]
@@ -410,7 +426,13 @@ At time 1735411234.567
 - Rotation: in RPY (degree) [0.000, 0.000, 0.000]
 ```
 
-Move the turtle and observe how values update in real-time.
+Open another new terminal and move the turtle:
+
+```bash
+ros2 run turtlesim turtle_teleop_key
+```
+
+Use the arrow keys to drive the turtle and observe how the Translation and Rotation values in the `tf2_echo` terminal update in real time as the turtle moves and turns.
 
 ### Step 3.2: Visualize Transform Tree
 
@@ -433,7 +455,7 @@ evince frames_*.pdf
 
 ### Step 3.3: Spawn Multiple Turtles and Observe Transforms
 
-**Spawn a second turtle:**
+**Spawn a second turtle if not already there:**
 ```bash
 ros2 service call /spawn turtlesim/srv/Spawn "{x: 8.0, y: 2.0, theta: 0.0, name: 'turtle2'}"
 ```
@@ -461,15 +483,13 @@ ros2 run tf2_ros tf2_monitor
 
 **Expected Output:**
 ```
-Frame: turtle1 published by: /turtlesim
-Average rate: 62.500 Hz
-Most recent transform: 0.016 sec old
-Buffer length: 4.960 sec
-
-Frame: turtle2 published by: /turtlesim
-Average rate: 62.500 Hz
-Most recent transform: 0.016 sec old
-Buffer length: 4.960 sec
+Gathering data on all frames for 10 seconds...
+RESULTS: for all Frames
+Frames:
+Frame: turtle1, published by <no authority available>, Average Delay: 0.003, Max Delay: 0.156
+Frame: turtle2, published by <no authority available>, Average Delay: 0.001, Max Delay: 0.009
+All Broadcasters:
+Node: <no authority available> 125.211 Hz, Average Delay: 0.001 Max Delay: 0.009
 ```
 
 ### Step 3.5: Understanding Transform Broadcasting
@@ -551,37 +571,7 @@ ros2 run rviz2 rviz2
 - Select `turtle1`
 - Change marker scale for visibility
 
-### Step 4.5: Add Odometry Display (Turtle Path)
-
-Unfortunately, TurtleSim doesn't publish standard odometry. But we can visualize the pose.
-
-**Add Pose Display:**
-1. Click **Add**
-2. Go to **By topic** tab
-3. Find `/turtle1/pose`
-4. Select **Pose**
-5. Click **OK**
-
-**Configure the Pose display:**
-- Shape: Arrow
-- Color: Choose a visible color (e.g., red)
-- Shaft/Head Length/Radius: Adjust for visibility
-
-**Result:** An arrow shows the turtle's current position and heading.
-
-### Step 4.6: Visualize Multiple Turtles
-
-**If you have turtle2 spawned:**
-1. Add another Pose display
-2. Topic: `/turtle2/pose`
-3. Use a different color (e.g., blue)
-
-**Now you can see:**
-- Both turtles' positions and orientations
-- Their coordinate frames
-- Relative positioning
-
-### Step 4.7: Adjust View in RViz2
+### Step 4.5: Adjust View in RViz2
 
 **Camera controls:**
 - **Left mouse button:** Rotate view
@@ -602,7 +592,7 @@ Unfortunately, TurtleSim doesn't publish standard odometry. But we can visualize
 - Type: TopDownOrtho
 - Adjust distance to see entire window
 
-### Step 4.8: Save RViz2 Configuration
+### Step 4.6: Save RViz2 Configuration
 
 **Save your configuration:**
 1. File → **Save Config As**
@@ -747,12 +737,6 @@ ros2 bag record -o my_turtle_recording /turtle1/cmd_vel /turtle1/pose
 ros2 bag play rosbag2_YYYY_MM_DD-HH_MM_SS --start-offset 5.0
 ```
 (Starts 5 seconds into the recording)
-
-**Play only a portion:**
-```bash
-ros2 bag play rosbag2_YYYY_MM_DD-HH_MM_SS --duration 10.0
-```
-(Plays only first 10 seconds)
 
 ### Step 5.8: Export Bag Data
 
