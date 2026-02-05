@@ -436,4 +436,356 @@ slam_toolbox:
 
 ---
 
+## Part 5: Running SLAM with Async Mode
+
+### Step 5.1: Setup RViz Configuration
+
+First, let's create an RViz config for SLAM visualization.
+
+**File:** `~/slam_lab/config/slam_visualization.rviz`
+
+```yaml
+Panels:
+  - Class: rviz_common/Displays
+    Help Height: 78
+    Name: Displays
+    Property Tree Widget:
+      Expanded:
+        - /Global Options1
+        - /Map1
+        - /LaserScan1
+      Splitter Ratio: 0.5
+    Tree Height: 549
+  - Class: rviz_common/Views
+    Expanded:
+      - /Current View1
+    Name: Views
+    Splitter Ratio: 0.5
+Visualization Manager:
+  Class: ""
+  Displays:
+    - Alpha: 0.5
+      Cell Size: 1
+      Class: rviz_default_plugins/Grid
+      Color: 160; 160; 164
+      Enabled: true
+      Line Style:
+        Line Width: 0.029999999329447746
+        Value: Lines
+      Name: Grid
+      Normal Cell Count: 0
+      Offset:
+        X: 0
+        Y: 0
+        Z: 0
+      Plane: XY
+      Plane Cell Count: 100
+      Reference Frame: <Fixed Frame>
+      Value: true
+    
+    - Class: rviz_default_plugins/TF
+      Enabled: true
+      Frame Timeout: 15
+      Frames:
+        All Enabled: false
+        ego_racecar/base_link:
+          Value: true
+        ego_racecar/laser:
+          Value: true
+        map:
+          Value: true
+      Marker Scale: 0.5
+      Name: TF
+      Show Arrows: true
+      Show Axes: true
+      Show Names: true
+      Tree:
+        map:
+          ego_racecar/base_link:
+            ego_racecar/laser:
+              {}
+      Update Interval: 0
+      Value: true
+    
+    - Alpha: 0.7
+      Class: rviz_default_plugins/Map
+      Color Scheme: map
+      Draw Behind: false
+      Enabled: true
+      Name: Map
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map
+      Update Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /map_updates
+      Use Timestamp: false
+      Value: true
+    
+    - Alpha: 1
+      Autocompute Intensity Bounds: true
+      Autocompute Value Bounds:
+        Max Value: 10
+        Min Value: -10
+        Value: true
+      Axis: Z
+      Channel Name: intensity
+      Class: rviz_default_plugins/LaserScan
+      Color: 255; 0; 0
+      Color Transformer: FlatColor
+      Decay Time: 0
+      Enabled: true
+      Invert Rainbow: false
+      Max Color: 255; 255; 255
+      Max Intensity: 0
+      Min Color: 0; 0; 0
+      Min Intensity: 0
+      Name: LaserScan
+      Position Transformer: XYZ
+      Selectable: true
+      Size (Pixels): 3
+      Size (m): 0.05
+      Style: Flat Squares
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Best Effort
+        Value: /scan
+      Use Fixed Frame: true
+      Use rainbow: true
+      Value: true
+    
+    - Alpha: 1
+      Axes Length: 0.3
+      Axes Radius: 0.03
+      Class: rviz_default_plugins/PoseWithCovariance
+      Color: 255; 25; 0
+      Covariance:
+        Orientation:
+          Alpha: 0.5
+          Color: 255; 255; 127
+          Color Style: Unique
+          Frame: Local
+          Offset: 1
+          Scale: 1
+          Value: true
+        Position:
+          Alpha: 0.30000001192092896
+          Color: 204; 51; 204
+          Scale: 1
+          Value: true
+        Value: true
+      Enabled: true
+      Head Length: 0.15
+      Head Radius: 0.1
+      Name: Robot Pose
+      Shaft Length: 0.3
+      Shaft Radius: 0.05
+      Shape: Arrow
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        Filter size: 10
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /pose
+      Value: true
+    
+  Enabled: true
+  Global Options:
+    Background Color: 48; 48; 48
+    Fixed Frame: map
+    Frame Rate: 30
+  Name: root
+  Tools:
+    - Class: rviz_default_plugins/Interact
+      Hide Inactive Objects: true
+    - Class: rviz_default_plugins/MoveCamera
+    - Class: rviz_default_plugins/Select
+    - Class: rviz_default_plugins/FocusCamera
+    - Class: rviz_default_plugins/Measure
+      Line color: 128; 128; 0
+    - Class: rviz_default_plugins/SetInitialPose
+      Covariance x: 0.25
+      Covariance y: 0.25
+      Covariance yaw: 0.06853891909122467
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /initialpose
+    - Class: rviz_default_plugins/SetGoal
+      Topic:
+        Depth: 5
+        Durability Policy: Volatile
+        History Policy: Keep Last
+        Reliability Policy: Reliable
+        Value: /goal_pose
+  Transformation:
+    Current:
+      Class: rviz_default_plugins/TF
+  Value: true
+  Views:
+    Current:
+      Class: rviz_default_plugins/Orbit
+      Distance: 25
+      Enable Stereo Rendering:
+        Stereo Eye Separation: 0.05999999865889549
+        Stereo Focal Distance: 1
+        Swap Stereo Eyes: false
+        Value: false
+      Focal Point:
+        X: 0
+        Y: 0
+        Z: 0
+      Focal Shape Fixed Size: true
+      Focal Shape Size: 0.05000000074505806
+      Invert Z Axis: false
+      Name: Current View
+      Near Clip Distance: 0.009999999776482582
+      Pitch: 1.5697963237762451
+      Target Frame: <Fixed Frame>
+      Value: Orbit (rviz)
+      Yaw: 3.1415927410125732
+    Saved: ~
+Window Geometry:
+  Displays:
+    collapsed: false
+  Height: 846
+  Hide Left Dock: false
+  Hide Right Dock: false
+  QMainWindow State: 000000ff00000000fd000000040000000000000156000002b0fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000002b0000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f000002b0fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d000002b0000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004b00000003efc0100000002fb0000000800540069006d00650100000000000004b0000002fb00fffffffb0000000800540069006d006501000000000000045000000000000000000000023f000002b000000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Selection:
+    collapsed: false
+  Tool Properties:
+    collapsed: false
+  Views:
+    collapsed: false
+  Width: 1200
+  X: 0
+  Y: 0
+```
+
+### Step 5.2: Launch Async SLAM
+
+Open **Terminal 1** - Launch RViz:
+```bash
+cd ~/slam_lab
+source /opt/ros/humble/setup.bash
+rviz2 -d config/slam_visualization.rviz
+```
+
+Open **Terminal 2** - Launch slam_toolbox:
+```bash
+cd ~/slam_lab
+source /opt/ros/humble/setup.bash
+ros2 launch slam_toolbox online_async_launch.py \
+  params_file:=config/online_async_racecar.yaml \
+  use_sim_time:=true
+```
+
+**Expected Output:**
+```
+[INFO] [async_slam_toolbox_node]: Node created
+[INFO] [async_slam_toolbox_node]: Using solver plugin: solver_plugins::CeresSolver
+[INFO] [async_slam_toolbox_node]: CeresSolver: Using SPARSE_NORMAL_CHOLESKY linear algebra.
+```
+
+Open **Terminal 3** - Play the rosbag:
+```bash
+cd ~/slam_lab/bags
+source /opt/ros/humble/setup.bash
+ros2 bag play racecar_lap --clock
+```
+
+**What to Observe in RViz:**
+1. **Map gradually appears** as the car drives
+2. **Red laser scan points** showing LiDAR data
+3. **TF frames** moving as the car navigates
+4. **Map updates** showing walls and obstacles
+
+### Step 5.3: Monitor SLAM Performance
+
+Open **Terminal 4** - Check topics:
+```bash
+ros2 topic list
+```
+
+**Expected Output (new SLAM topics):**
+```
+/map
+/map_metadata
+/pose
+/slam_toolbox/feedback
+/slam_toolbox/graph_visualization
+/slam_toolbox/scan_visualization
+/slam_toolbox/update_map
+```
+
+**Monitor map topic:**
+```bash
+ros2 topic hz /map
+```
+
+**Check slam_toolbox node info:**
+```bash
+ros2 node info /async_slam_toolbox_node
+```
+
+### Step 5.4: Understanding What's Happening
+
+As the bag plays:
+1. **SLAM receives** `/scan` (LiDAR data) and `/ego_racecar/odom` (odometry)
+2. **Processes scans** to match them with previous scans
+3. **Estimates robot pose** by combining odometry and scan matching
+4. **Builds occupancy grid map** showing free space (white), obstacles (black), and unknown (gray)
+5. **Publishes transform** from `map` to `ego_racecar/base_link`
+6. **Detects loop closures** when returning to previously visited areas (optimizes map)
+
+### Step 5.5: Save the Map
+
+Once the bag finishes playing:
+
+**In Terminal 2 (where SLAM is running), press Ctrl+C to stop**
+
+**Or use the map server to save manually:**
+
+Open **Terminal 5**:
+```bash
+cd ~/slam_lab/maps
+ros2 run nav2_map_server map_saver_cli -f racetrack_async_map
+```
+
+**Expected Output:**
+```
+[INFO] [map_saver]: Saving map to 'racetrack_async_map.pgm' and 'racetrack_async_map.yaml'
+[INFO] [map_saver]: Map saved
+```
+
+**Two files created:**
+- `racetrack_async_map.pgm` - The actual map image
+- `racetrack_async_map.yaml` - Map metadata (resolution, origin, etc.)
+
+**View the map:**
+```bash
+eog racetrack_async_map.pgm
+```
+
+or
+
+```bash
+gimp racetrack_async_map.pgm
+```
+
+---
 
