@@ -1134,3 +1134,159 @@ free_thresh: 0.196
 - **Resolution:** Higher resolution for precise racing lines
 
 ---
+
+# Deliverable
+
+## SLAM Robustness Analysis and Experimentation
+
+### Objective
+Investigate how sensor noise and errors affect SLAM performance by systematically introducing different types of errors to the LiDAR scan data. You will analyze how slam_toolbox responds to various error conditions and document your findings.
+
+---
+
+## Assignment Overview
+
+You will:
+1. Create a ROS2 node that introduces errors to LiDAR scan data
+2. Run slam_toolbox with the modified data
+3. Generate maps under different error conditions
+4. Compare and analyze the results
+5. Document your observations
+
+---
+
+## Detailed Requirements
+
+Using the provided rosbag, you will:
+
+1. Run a **baseline** SLAM mapping pass (no modifications to the bag replay) and save that map
+2. Run at least **one “corrupted input”** SLAM pass by injecting error into a main SLAM-related topic, for example: `/scan` (easiest).
+3. Save that map as well. 
+4. Compare results and write a short observation of how the error impacted mapping and localization.
+
+You must run **at least two runs**:
+
+### 1) Baseline Run (No Errors)
+
+* Replay rosbag normally
+* Run slam_toolbox
+* Save and display map
+
+### 2) Corrupted Run (With Errors)
+
+* Replay rosbag
+* Apply one error type to a SLAM-relevant topic
+* Run slam_toolbox again
+* Save and display new map
+
+You may do more corrupted runs for extra insight, but **one corrupted run is required**.
+
+---
+
+## Some Examples of Approache
+
+### Remap `/scan` from bag → corrupt → republish to `/scan`
+
+1. Play bag while remapping:
+ex:
+   ```bash
+   ros2 bag play racecar_lap --clock --remap /scan:=/scan_original
+   ```
+2. Run a node that:
+
+   * subscribes to `/scan_original`
+   * modifies the LaserScan data (inject error)
+   * publishes the modified scan to `/scan` (the topic slam_toolbox expects)
+
+### Change slam_toolbox to listen to your modified scan topic
+
+* publish corrupted scans to something like `/scan_corrupted`
+* configure slam_toolbox parameter(s) to subscribe to that topic
+
+---
+
+## Error Injection Ideas
+
+### A. Add Noise to Ranges (Gaussian or uniform)
+
+**Effect to watch for:** fuzzier walls, map “thickening,” loop closure instability.
+
+### B. Random Dropout (set some ranges to `inf` / `0.0`)
+
+Example: drop 20–40% of beams.
+**Effect:** missing wall segments, map holes, lost tracking.
+
+### C. Range Scaling Bias
+
+Multiply ranges by 1.05–1.20 (systematic error).
+**Effect:** map distortion (track becomes too big/small), misalignment over time.
+
+### D. Angle/Index Scramble
+
+Shuffle a portion of beams or reverse the array.
+**Effect:** SLAM may quickly fail; map becomes nonsense.
+
+### E. Lower Effective Update Rate
+
+Publish only every Nth message.
+**Effect:** pose tracking worse, map drift.
+
+**Recommendation:** Start with **dropout** or **noise**, because they show clear degradation but still “kinda works.”
+
+---
+
+## Examples of What to Observe and Report
+
+Compare baseline vs corrupted:
+
+* Does the map still look like a track?
+* Are walls straight or smeared?
+* Does the map drift or rotate over time?
+* Does slam_toolbox lose tracking / diverge?
+* Any loop-closure behavior differences (if visible)?
+* Any notable console warnings/errors?
+
+---
+
+## **Submission Instructions**
+
+1. **Submit only the `src` folder** from your ROS 2 workspace.
+
+   * All of your work **must be contained inside this `src` folder**.
+   * Do **not** include `build/`, `install/`, or `log/` directories.
+
+2. **Make sure all required packages, nodes, launch files, and config files** needed to run your assignment are inside the `src` folder.
+
+3. **Include a `README.md` file inside the `src` folder** that clearly explains:
+
+   * What you implemented for the assignment
+   * How to build the workspace
+   * How to run your code (exact commands)
+   * Any report or observation if applicable
+
+4. **Zip the `src` folder only** (not the full workspace).
+
+5. **Name the ZIP file exactly as follows:**
+
+   ```
+   first-name_last-name_studentID_lab#.zip
+   ```
+
+   Example:
+
+   ```
+   jane_doe_1234567_lab2.zip
+   ```
+
+---
+
+## **Grading Rubric (100 Points)**
+
+| Category                           | Points |
+| ---------------------------------- | ------ |
+| Fully functioning launch file | 15     |
+| Proper `rosbag` usage      | 15     |
+| Node implemented properly    | 20     |
+| Error Introduced Properly      | 20     |
+| Insightful Analysis     | 20     |
+| Well organized submission, well formatted codes          | 10     |
