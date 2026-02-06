@@ -259,7 +259,7 @@ slam_toolbox:
     mode: mapping # mapping, localization, or lifelong
     
     # Debugging
-    debug_logging: false
+    debug_logging: true
     throttle_scans: 1  # Process every scan (1), or skip scans (>1)
     
     # Transform publication
@@ -328,7 +328,7 @@ slam_toolbox:
     mode: mapping
     
     # Debugging
-    debug_logging: false
+    debug_logging: true
     throttle_scans: 1
     
     # Transform publication
@@ -398,7 +398,7 @@ slam_toolbox:
     map_start_at_dock: true
     
     # Debugging
-    debug_logging: false
+    debug_logging: true
     throttle_scans: 1
     
     # Transform publication
@@ -664,7 +664,7 @@ Window Geometry:
   Height: 846
   Hide Left Dock: false
   Hide Right Dock: false
-  QMainWindow State: 000000ff00000000fd000000040000000000000156000002b0fc0200000008fb0000001200530065006c0065006300740069006f006e00000001e10000009b0000005c00fffffffb0000001e0054006f006f006c002000500072006f007000650072007400690065007302000001ed000001df00000185000000a3fb000000120056006900650077007300200054006f006f02000001df000002110000018500000122fb000000200054006f006f006c002000500072006f0070006500720074006900650073003203000002880000011d000002210000017afb000000100044006900730070006c006100790073010000003d000002b0000000c900fffffffb0000002000730065006c0065006300740069006f006e00200062007500660066006500720200000138000000aa0000023a00000294fb00000014005700690064006500530074006500720065006f02000000e6000000d2000003ee0000030bfb0000000c004b0069006e0065006300740200000186000001060000030c00000261000000010000010f000002b0fc0200000003fb0000001e0054006f006f006c002000500072006f00700065007200740069006500730100000041000000780000000000000000fb0000000a00560069006500770073010000003d000002b0000000a400fffffffb0000001200530065006c0065006300740069006f006e010000025a000000b200000000000000000000000200000490000000a9fc0100000001fb0000000a00560069006500770073030000004e00000080000002e10000019700000003000004b00000003efc0100000002fb0000000800540069006d00650100000000000004b0000002fb00fffffffb0000000800540069006d006501000000000000045000000000000000000000023f000002b000000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  QMainWindow State:
   Selection:
     collapsed: false
   Tool Properties:
@@ -690,8 +690,7 @@ Open **Terminal 2** - Launch slam_toolbox:
 cd ~/slam_lab
 source /opt/ros/humble/setup.bash
 ros2 launch slam_toolbox online_async_launch.py \
-  params_file:=config/online_async_racecar.yaml \
-  use_sim_time:=true
+  slam_params_file:=config/online_async_racecar.yaml
 ```
 
 **Expected Output:**
@@ -705,7 +704,7 @@ Open **Terminal 3** - Play the rosbag:
 ```bash
 cd ~/slam_lab/bags
 source /opt/ros/humble/setup.bash
-ros2 bag play racecar_lap --clock
+ros2 bag play racecar_lap
 ```
 
 **What to Observe in RViz:**
@@ -730,16 +729,6 @@ ros2 topic list
 /slam_toolbox/graph_visualization
 /slam_toolbox/scan_visualization
 /slam_toolbox/update_map
-```
-
-**Monitor map topic:**
-```bash
-ros2 topic hz /map
-```
-
-**Check slam_toolbox node info:**
-```bash
-ros2 node info /async_slam_toolbox_node
 ```
 
 ### Step 5.4: Understanding What's Happening
@@ -789,3 +778,359 @@ gimp racetrack_async_map.pgm
 
 ---
 
+## Part 6: Running SLAM with Sync Mode
+
+### Step 6.1: Clear Previous Session
+
+Stop all running nodes (Ctrl+C in all terminals).
+
+### Step 6.2: Launch Sync SLAM
+
+**Terminal 1** - RViz (same as before):
+```bash
+cd ~/slam_lab
+rviz2 -d config/slam_visualization.rviz
+```
+
+**Terminal 2** - Launch sync slam_toolbox:
+```bash
+cd ~/slam_lab
+ros2 launch slam_toolbox online_sync_launch.py \
+  slam_params_file:=config/online_sync_racecar.yaml
+```
+
+**Terminal 3** - Play rosbag (maybe slower to match sync processing):
+```bash
+cd ~/slam_lab/bags
+ros2 bag play racecar_lap --rate 0.5
+```
+
+**Note the `--rate 0.5`:** This plays the bag at half speed, giving sync SLAM more time to process each scan.
+
+### Step 6.3: Compare with Async Mode
+
+**Observations:**
+- **Sync mode** may produce more accurate maps but runs slower
+- **Map updates** happen more deliberately
+- **Processing** is more thorough for each scan
+
+### Step 6.4: Save Sync Map
+
+```bash
+cd ~/slam_lab/maps
+ros2 run nav2_map_server map_saver_cli -f racetrack_sync_map
+```
+
+### Step 6.5: Compare the Two Maps
+
+```bash
+cd ~/slam_lab/maps
+eog racetrack_async_map.pgm racetrack_sync_map.pgm
+```
+
+**Discussion Points:**
+- Which map looks more accurate?
+- Which has better loop closure?
+- Which has cleaner walls?
+- Trade-offs between speed and accuracy
+
+---
+
+## Part 7: Using slam_toolbox Services and Features
+
+slam_toolbox provides several services for runtime interaction.
+
+### Step 7.1: List Available Services
+
+With SLAM running:
+```bash
+ros2 service list | grep slam_toolbox
+```
+
+**Expected Output:**
+```
+/slam_toolbox/clear_changes
+/slam_toolbox/clear_queue
+/slam_toolbox/deserialize_map
+/slam_toolbox/dynamic_map
+/slam_toolbox/manual_loop_closure
+/slam_toolbox/pause_new_measurements
+/slam_toolbox/save_map
+/slam_toolbox/serialize_map
+/slam_toolbox/toggle_interactive_mode
+```
+
+### Step 7.2: Save Map via Service
+
+```bash
+ros2 service call /slam_toolbox/save_map slam_toolbox/srv/SaveMap "{name: {data: '<absolute path>/slam_lab/maps/service_saved_map'}}"
+```
+
+---
+
+## Part 8: Localization Mode with Saved Map
+
+Now let's use the map we created to localize the robot (instead of building a new map).
+
+### Step 8.1: Prepare Localization
+
+Stop all SLAM nodes.
+
+###Step 8.2: Update Localization Config
+
+Edit `~/slam_lab/config/localization_racecar.yaml` and update the map file path:
+
+```yaml
+slam_toolbox:
+  ros__parameters:
+    # ... other parameters ...
+    map_file_name: <absolute path>/slam_lab/maps/slam_graph
+    # ... rest of config ...
+```
+
+> Use the serialized map we saved earlier
+
+### Step 8.3: Launch Localization Mode
+
+**Terminal 1** - RViz:
+```bash
+cd ~/slam_lab
+rviz2 -d config/slam_visualization.rviz
+```
+
+**Terminal 2** - Localization slam_toolbox:
+```bash
+cd ~/slam_lab
+ros2 launch slam_toolbox localization_launch.py \
+  slam_params_file:=config/localization_racecar.yaml
+```
+
+**Terminal 3** - Play rosbag:
+```bash
+cd ~/slam_lab/bags
+ros2 bag play racecar_lap
+```
+
+**What to Observe:**
+- Map loads immediately (not built from scratch)
+- Robot localizes itself on the existing map
+- No map updates (map is fixed)
+- Laser scans should align with map walls
+
+---
+
+## Part 9: Parameter Tuning and Experimentation
+
+### Experiment 1: Resolution
+
+Create a high-resolution config:
+
+**File:** `~/slam_lab/config/high_res.yaml`
+
+```yaml
+# Copy from online_async_racecar.yaml but change:
+resolution: 0.02  # 2cm instead of 5cm
+```
+
+**Run with high resolution:**
+```bash
+ros2 launch slam_toolbox online_async_launch.py \
+  params_file:=config/high_res.yaml
+```
+
+**Observations:**
+- More detailed map
+- Larger file size
+- More processing required
+
+### Experiment 2: Loop Closure Settings
+
+**Disable loop closure:**
+
+Edit config file:
+```yaml
+do_loop_closing: false
+```
+
+**Run and observe:**
+- Map may have drift when completing the lap
+- Start and end positions may not align perfectly
+
+**Enable aggressive loop closure:**
+```yaml
+do_loop_closing: true
+loop_match_minimum_response_fine: 0.3  # Lower threshold
+```
+
+**Observe:**
+- Better loop closure
+- Start/end positions align better
+
+### Experiment 3: Scan Throttling
+
+For faster processing with less accuracy:
+
+```yaml
+throttle_scans: 3  # Process only every 3rd scan
+```
+
+**Observations:**
+- Faster processing
+- May miss details
+- Good for initial rapid mapping
+
+### Experiment 4: Maximum Laser Range
+
+Try different ranges:
+
+```yaml
+max_laser_range: 10.0  # Short range
+```
+
+vs
+
+```yaml
+max_laser_range: 30.0  # Long range
+```
+
+**Observations:**
+- Short range: More local features, less far-field noise
+- Long range: Better overall structure, more noise
+
+---
+
+## Part 10: Advanced Features and RViz Plugins
+
+### Step 10.1: slam_toolbox RViz Plugin
+
+slam_toolbox includes an interactive RViz plugin for runtime control.
+
+**In RViz:**
+1. Click **Panels → Add New Panel**
+2. Select **slam_toolbox → SlamToolboxPlugin**
+3. A new panel appears
+
+**Plugin features:**
+- **Save Map** button
+- **Clear Changes** button
+- **Serialize Map** button
+- **Interactive Mode** toggle
+- **Continue/Pause** controls
+
+**Try these features while SLAM is running!**
+
+### Step 10.2: View Pose Graph
+
+Add graph visualization in RViz:
+1. Click **Add**
+2. Select **MarkerArray**
+3. Set topic to `/slam_toolbox/graph_visualization`
+
+**You'll see:**
+- Nodes representing robot poses
+- Edges showing scan matches
+- Loop closure constraints
+
+---
+
+## Part 11: Analyzing SLAM Performance
+
+### Metrics to Evaluate
+
+1. **Map Quality:**
+   - Clear wall boundaries
+   - Minimal noise
+   - Proper loop closure (start/end align)
+
+2. **Computational Performance:**
+   - Processing speed
+   - CPU usage
+   - Memory consumption
+
+3. **Localization Accuracy:**
+   - Laser scans align with map
+   - Consistent pose estimates
+
+### Step 11.1: Check CPU Usage
+
+While SLAM is running:
+```bash
+top | grep slam
+```
+
+or
+
+```bash
+htop
+```
+
+### Step 11.2: Check Topic Rates
+
+```bash
+ros2 topic hz /map  # Might not always work due to QoS mismatch
+ros2 topic hz /pose
+ros2 topic hz /scan
+```
+
+### Step 11.3: Inspect Map File
+
+```bash
+cat ~/slam_lab/maps/racetrack_async_map.yaml
+```
+
+**Expected content:**
+```yaml
+image: racetrack_async_map.pgm
+resolution: 0.050000
+origin: [-10.000000, -10.000000, 0.000000]
+negate: 0
+occupied_thresh: 0.65
+free_thresh: 0.196
+```
+
+**Key fields:**
+- `resolution`: Meters per pixel
+- `origin`: Map origin in world coordinates
+- `occupied_thresh`: Threshold for considering cell occupied
+
+---
+
+## Lab Summary
+
+### What We Learned:
+
+1. **SLAM Fundamentals:**
+   - Simultaneous Localization and Mapping concepts
+   - Importance for autonomous systems
+   - Sensor fusion (LiDAR + Odometry)
+
+2. **slam_toolbox Modes:**
+   - **Async:** Fast, continuous mapping
+   - **Sync:** Accurate, deliberate processing
+   - **Localization:** Use existing maps
+
+3. **Configuration:**
+   - Critical parameters (resolution, range, loop closure)
+   - Trade-offs between accuracy and speed
+   - Tuning for different scenarios
+
+4. **Practical Skills:**
+   - Creating and saving maps
+   - Serializing pose graphs
+   - Using slam_toolbox services
+   - RViz visualization and plugins
+
+5. **Performance Analysis:**
+   - Evaluating map quality
+   - Monitoring computational load
+   - Understanding parameter effects
+
+### Key Takeaways for Autonomous Racing:
+
+- **Pre-mapping:** Create track maps offline before racing
+- **Localization:** Use pre-built maps for precise localization during races
+- **Parameter tuning:** Balance accuracy vs. real-time performance
+- **Loop closure:** Critical for closed-circuit tracks
+- **Resolution:** Higher resolution for precise racing lines
+
+---
