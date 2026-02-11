@@ -9,7 +9,7 @@ This guide will walk you through the steps to install the **F1TENTH Gym** enviro
 Before starting, ensure your system packages are up-to-date and that Python3’s `pip` is installed:
 
 ```bash
-sudo apt update && sudo apt upgrade
+sudo apt update
 sudo apt install python3-pip
 ```
 
@@ -149,7 +149,7 @@ After making changes to the configuration, rebuild the workspace with `colcon bu
 
 ---
 
-## 9. Topics Published by the Simulation
+## 9. Some Topics Published by the Simulation
 
 ### In Single-Agent Mode (Topics Published)
 
@@ -210,9 +210,9 @@ In the terminal window running the **teleop** node:
 You have two options to develop and launch your own agent to control the vehicles:
 
 1. **Create a new package in the existing ROS2 workspace:**  
-   Create your package in the `/sim_ws` workspace inside the container. After launching the simulation, launch your agent node in another terminal.
+   Create your package in the `/sim_ws` workspace. After launching the simulation, launch your agent node in another terminal.
 
 2. **Create a new container for your agent node:**  
-   Create a separate container for your agent node. Ensure both the simulation and agent containers are on the same network to enable communication. If using **Docker Compose**, modify the `docker-compose.yml` file to include your agent node and ensure it shares the same network as the simulation container.
+   Create a separate workspace for your agent node. Ensure both the simulation and agent workspace are on the same network to enable communication.
 
 ---
