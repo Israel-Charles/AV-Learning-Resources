@@ -1,4 +1,4 @@
-# Lab5: F1TENTH Gym ROS Setup Guide for ROS2 Humble on Ubuntu 22.04
+# F1TENTH Gym ROS Setup Guide for ROS2 Humble on Ubuntu 22.04
 
 This guide will walk you through the steps to install the **F1TENTH Gym** environment (a Python-based simulation library) and integrate the ROS2 communication bridge. These instructions apply to both **ROS 2 Humble** running on **Ubuntu 22.04** (either natively or through a virtual machine).
 
