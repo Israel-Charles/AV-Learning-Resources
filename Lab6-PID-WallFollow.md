@@ -1263,3 +1263,53 @@ ros2 launch wall_follow wall_follow_sim.launch.py
 | Jerky motion | Noisy derivative | Add filtering or reduce Kd |
 
 ---
+
+# Deliverable
+
+## Wall Following With PID
+
+### Objective
+
+Create a ROS 2 node that follows a wall using PID control and LaserScan data. Tune it for a provided map/track so the vehicle can complete one full lap without crashing as fast as possible.
+
+## Assignment Overview
+
+You will:
+
+1. Implement wall following method with PID controller.
+2. Fine tune PID controller to make the vehicle as fast as possible.
+3. Write a launch file that starts both the simulation and the wall follow node.
+4. Screen record the vehicle doing at least one full lap without crashing.
+5. Note the PID parameters you used and for what speed or set of speeds it is fined tuned for (can put in README file)
+
+## **Submission Instructions**
+
+1. **Submit only the `src` folder** from your ROS 2 workspace.
+
+   * All of your work **must be contained inside this `src` folder**.
+   * Do **not** include `build/`, `install/`, or `log/` directories.
+
+2. **Make sure all required packages, nodes, launch files, and config files** needed to run your assignment are inside the `src` folder.
+
+3. **Include a `README.md` file inside the `src` folder** that clearly explains:
+
+   * What you implemented for the assignment
+   * How to build the workspace
+   * How to run your code (exact commands)
+   * Any report or observation if applicable
+
+4. **Zip the `src` folder only** (not the full workspace).
+
+5. **Name the ZIP file exactly as follows:**
+
+   ```
+   first-name_last-name_studentID_lab#.zip
+   ```
+
+   Example:
+
+   ```
+   jane_doe_1234567_lab2.zip
+   ```
+
+---
