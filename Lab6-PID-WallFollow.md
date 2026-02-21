@@ -542,12 +542,205 @@ def pid_control(self, error, velocity):
     
     self.drive_pub.publish(drive_msg)
 ```
+With this you should have a working Wall Following thechnique with PID control
+
+**Test your node and fine tune it**
 
 ---
 
-### Step 3.4: Implement Velocity Control
+## Part 4: Configuration and Launch Files
 
-Update the `scan_callback` to calculate velocity based on steering angle:
+### Step 4.1: Create Parameter File
+
+**File:** `~/ros2_ws/src/wall_follow/config/wall_follow_params.yaml`
+
+```yaml
+# Wall Following PID Parameters
+
+wall_follow_node:
+  ros__parameters:
+    # PID Gains
+    # Start with P-only control, then add D, finally add I if needed
+    kp: 1.0          # Proportional gain
+    ki: 0.0          # Integral gain (start with 0)
+    kd: 0.0          # Derivative gain
+    
+    # Desired distance from wall (meters)
+    desired_distance: 1.0
+    
+    # Lookahead distance for predictive control (meters)
+    # Larger values → more stable but less responsive
+    # Smaller values → more responsive but may oscillate
+    lookahead_distance: 1.0
+    
+    # Angle theta between the two LiDAR beams (degrees)
+    # Typically between 40-70 degrees
+    theta_deg: 50.0
+```
+
+### Step 4.2: Create Launch File
+
+**File:** `~/ros2_ws/src/wall_follow/launch/wall_follow.launch.py`
+
+```python
+#!/usr/bin/env python3
+
+import os
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.substitutions import LaunchConfiguration
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from ament_index_python.packages import get_package_share_directory
+
+
+def generate_launch_description():
+    """
+    Launch wall following node with F1TENTH GYM ROS simulator
+    """
+    
+    # Get package directories
+    wall_follow_dir = get_package_share_directory('wall_follow')
+    
+    # Path to parameter file
+    params_file = os.path.join(wall_follow_dir, 'config', 'wall_follow_params.yaml')
+    
+    # Declare launch arguments
+    kp_arg = DeclareLaunchArgument(
+        'kp',
+        default_value='1.0',
+        description='Proportional gain'
+    )
+    
+    ki_arg = DeclareLaunchArgument(
+        'ki',
+        default_value='0.0',
+        description='Integral gain'
+    )
+    
+    kd_arg = DeclareLaunchArgument(
+        'kd',
+        default_value='0.0',
+        description='Derivative gain'
+    )
+    
+    desired_distance_arg = DeclareLaunchArgument(
+        'desired_distance',
+        default_value='1.0',
+        description='Desired distance from wall (meters)'
+    )
+    
+    # Wall follow node
+    wall_follow_node = Node(
+        package='wall_follow',
+        executable='wall_follow_node',
+        name='wall_follow_node',
+        output='screen',
+        emulate_tty=True,
+        parameters=[
+            params_file,
+            {
+                'kp': LaunchConfiguration('kp'),
+                'ki': LaunchConfiguration('ki'),
+                'kd': LaunchConfiguration('kd'),
+                'desired_distance': LaunchConfiguration('desired_distance'),
+            }
+        ]
+    )
+    
+    return LaunchDescription([
+        kp_arg,
+        ki_arg,
+        kd_arg,
+        desired_distance_arg,
+        wall_follow_node,
+    ])
+```
+
+---
+
+### Step 4.3: Build the Package
+
+```bash
+cd ~/ros2_ws
+colcon build --packages-select wall_follow
+source install/setup.bash
+```
+
+**Verify build:**
+```bash
+ros2 pkg list | grep wall_follow
+ros2 pkg executables wall_follow
+```
+
+---
+
+## Part 5: Testing in Simulator
+
+### Step 5.1: Launch F1TENTH GYM ROS Simulator
+
+**Terminal 1 - Simulator:**
+```bash
+ros2 launch f1tenth_gym_ros gym_bridge_launch.py
+```
+
+Wait for the simulator window to open.
+
+### Step 5.2: Initial Testing - P-Only Control
+
+**Terminal 2 - Wall Follow Node:**
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch wall_follow wall_follow.launch.py kp:=0.5 ki:=0.0 kd:=0.0
+```
+
+**Observe:**
+- Does the car start moving?
+- Does it maintain distance from the wall?
+- Is there oscillation?
+
+### Step 5.3: Monitor Topics
+
+**Terminal 3 - Monitor:**
+```bash
+# Check scan data
+ros2 topic hz /scan
+
+# Check drive commands
+ros2 topic echo /drive
+
+# Check node info
+ros2 node info /wall_follow_node
+```
+
+### Step 5.4: Visualize in RViz
+
+**Terminal 4 - RViz:**
+```bash
+rviz2
+```
+
+**Configure RViz:**
+1. Set Fixed Frame to `ego_racecar/base_link`
+2. Add LaserScan
+   - Topic: `/scan`
+   - Size: 0.05
+   - Color: Red
+3. Add RobotModel (if available)
+4. Add TF display
+
+**Observe:**
+- LiDAR scans showing walls
+- Car's orientation
+- Distance to walls
+
+---
+
+## Extra Functionality to the Wall Following Node
+
+### Implement Velocity Control Based on the Error Value
+
+Update the `scan_callback` to calculate velocity based on error value:
 
 ```python
 def scan_callback(self, msg):
@@ -589,9 +782,9 @@ def scan_callback(self, msg):
 
 ---
 
-### Step 3.5: Complete Implementation with Steering-Based Velocity
+### Steering-Based Velocity Control
 
-Better approach: calculate velocity after getting steering angle:
+Calculate velocity after getting steering angle:
 
 ```python
 def pid_control(self, error, velocity):
@@ -680,7 +873,185 @@ def scan_callback(self, msg):
 
 ---
 
-### Step 3.6: Add Anti-Windup for Integral Term
+### Adding Option to select Which Wall to Follow at Configuration
+
+Make the wall side configurable so you can easily switch between left and right.
+
+#### Add Wall Side Parameter
+
+Modify `__init__()`:
+
+```python
+def __init__(self):
+    super().__init__('wall_follow_node')
+    
+    # ... existing parameter declarations ...
+    
+    # Add wall side parameter
+    self.declare_parameter('wall_side', 'left')  # 'left' or 'right'
+    
+    # ... get other parameters ...
+    
+    self.wall_side = self.get_parameter('wall_side').value
+    
+    # Validate wall_side parameter
+    if self.wall_side not in ['left', 'right']:
+        self.get_logger().error(f'Invalid wall_side: {self.wall_side}. Must be "left" or "right".')
+        self.wall_side = 'left'
+    
+    # ... rest of initialization ...
+    
+    self.get_logger().info(f'Following {self.wall_side.upper()} wall')
+```
+
+#### Update get_error() to Handle Both Sides
+
+```python
+def get_error(self, range_data, dist):
+    """
+    Calculates the error to the wall. Can follow either left or right wall.
+    
+    Args:
+        range_data: LaserScan message
+        dist: desired distance to the wall (meters)
+
+    Returns:
+        error: calculated error (desired - actual future distance)
+    """
+    # Set beam angles based on wall side
+    if self.wall_side == 'right':
+        # Right wall following
+        angle_b = -np.pi/2  # 90 degrees to the RIGHT
+        angle_a = angle_b + self.theta  # theta degrees forward from beam b
+    else:  # left
+        # Left wall following
+        angle_b = np.pi/2  # 90 degrees to the LEFT
+        angle_a = angle_b - self.theta  # theta degrees backward from beam b
+    
+    # Get range measurements
+    b = self.get_range(range_data, angle_b)
+    a = self.get_range(range_data, angle_a)
+    
+    # Calculate alpha (angle between car's x-axis and the wall)
+    numerator = a * np.cos(self.theta) - b
+    denominator = a * np.sin(self.theta)
+    
+    if abs(denominator) < 1e-6:
+        alpha = 0.0
+    else:
+        alpha = np.arctan2(numerator, denominator)
+    
+    # Calculate current distance to wall (D_t)
+    D_t = b * np.cos(alpha)
+    
+    # Calculate projected future distance (D_{t+1})
+    D_t_plus_1 = D_t + self.lookahead_distance * np.sin(alpha)
+    
+    # Calculate error
+    error = dist - D_t_plus_1
+    
+    # Debug logging
+    self.get_logger().debug(
+        f'[{self.wall_side.upper()}] Ranges: a={a:.2f}m, b={b:.2f}m | '
+        f'Alpha: {np.rad2deg(alpha):.1f}° | '
+        f'D_t: {D_t:.2f}m | D_t+1: {D_t_plus_1:.2f}m | '
+        f'Error: {error:.2f}m',
+        throttle_duration_sec=0.5)
+    
+    return error
+```
+
+#### Update Configuration File
+
+**File:** `~/ros2_ws/src/wall_follow/config/wall_follow_params.yaml`
+
+```yaml
+# Wall Following PID Parameters
+
+wall_follow_node:
+  ros__parameters:
+    # PID Gains
+    kp: 1.0
+    ki: 0.0
+    kd: 0.1
+    
+    # Desired distance from wall (meters)
+    desired_distance: 1.0
+    
+    # Lookahead distance (meters)
+    lookahead_distance: 1.0
+    
+    # Angle theta between the two LiDAR beams (degrees)
+    theta_deg: 50.0
+    
+    # Wall side: 'left' or 'right'
+    wall_side: 'left'
+```
+
+#### Update Launch File
+
+Add wall_side as a launch argument:
+
+```python
+def generate_launch_description():
+    """
+    Launch wall following node with configurable wall side
+    """
+    
+    # Get package directories
+    wall_follow_dir = get_package_share_directory('wall_follow')
+    params_file = os.path.join(wall_follow_dir, 'config', 'wall_follow_params.yaml')
+    
+    # Declare launch arguments
+    wall_side_arg = DeclareLaunchArgument(
+        'wall_side',
+        default_value='left',
+        description='Which wall to follow: left or right'
+    )
+    
+    kp_arg = DeclareLaunchArgument('kp', default_value='1.0')
+    ki_arg = DeclareLaunchArgument('ki', default_value='0.0')
+    kd_arg = DeclareLaunchArgument('kd', default_value='0.1')
+    
+    # Wall follow node
+    wall_follow_node = Node(
+        package='wall_follow',
+        executable='wall_follow_node',
+        name='wall_follow_node',
+        output='screen',
+        emulate_tty=True,
+        parameters=[
+            params_file,
+            {
+                'wall_side': LaunchConfiguration('wall_side'),
+                'kp': LaunchConfiguration('kp'),
+                'ki': LaunchConfiguration('ki'),
+                'kd': LaunchConfiguration('kd'),
+            }
+        ]
+    )
+    
+    return LaunchDescription([
+        wall_side_arg,
+        kp_arg,
+        ki_arg,
+        kd_arg,
+        wall_follow_node,
+    ])
+```
+
+---
+### Add Integral Term (Optional)
+
+Only add if there's steady-state error (car consistently too close/far from wall):
+
+```bash
+ros2 launch wall_follow wall_follow.launch.py kp:=1.0 ki:=0.01 kd:=0.1
+```
+
+**Warning:** Too much Ki causes instability!
+
+### Add Anti-Windup for Integral Term for PID (Optional)
 
 Prevent integral windup (integral term growing unbounded):
 
@@ -704,5 +1075,191 @@ def pid_control(self, error, velocity):
     # ... rest of the method ...
 ```
 
+## Fine Tuning and Debugging
+
+### PID Tuning Tips
+
+- Start with P-only (Ki=0, Kd=0)
+  - **Goal:** Find Kp where car follows wall but oscillates slightly.
+- Add Derivative Term - Once you have a good Kp, add D term to dampen oscillations
+  - **Goal:** Reduce oscillations without making system too sluggish.
+- Add Integral Term (Optional)
+  - Only add if there's steady-state error (car consistently too close/far from wall)
+  - **Warning:** Too much Ki causes instability!
+- Adjust Lookahead Distance
+  - Shorter lookahead (more responsive, less stable)
+  - Longer lookahead (more stable, less responsive)
+
+### Debug Common Issues
+
+**Issue 1: Car Doesn't Move**
+```bash
+# Check if drive commands are being published
+ros2 topic echo /drive
+```
+- Verify steering_angle and speed are non-zero
+
+**Issue 2: Car Oscillates Wildly**
+- Reduce Kp
+- Increase Kd
+- Check for inf/nan in calculations
+
+**Issue 3: Car Crashes**
+- Increase lookahead distance
+- Reduce speed
+- Check angle calculations (degrees vs radians)
+
+**Issue 4: Car Drifts Away/Toward Wall**
+- Check error sign (should be: desired - actual)
+- Verify alpha calculation
+- Add small Ki term
+
+**Issue 5: No Response to Wall**
+- Check laser scan angles
+- Verify get_range() returns valid data
+- Print ranges for beam a and b
+
+### Add Debug Logging
+
+Modify code to add detailed logging:
+
+```python
+def get_error(self, range_data, dist):
+    # ... existing code ...
+    
+    # Debug logging
+    self.get_logger().debug(
+        f'Ranges: a={a:.2f}m, b={b:.2f}m | '
+        f'Alpha: {np.rad2deg(alpha):.1f}° | '
+        f'D_t: {D_t:.2f}m | D_t+1: {D_t_plus_1:.2f}m | '
+        f'Error: {error:.2f}m',
+        throttle_duration_sec=0.5)
+    
+    return error
+```
+
+Enable debug logging:
+```bash
+ros2 run wall_follow wall_follow_node --ros-args --log-level wall_follow_node:=DEBUG
+```
+
 ---
 
+## Creating Launch File that Starts Simulation and Wall Follow Node
+
+Create a complete launch file that starts everything:
+
+**File:** `~/ros2_ws/src/wall_follow/launch/wall_follow_sim.launch.py`
+
+```python
+#!/usr/bin/env python3
+
+import os
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import IncludeLaunchDescription, DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch_ros.substitutions import FindPackageShare
+from ament_index_python.packages import get_package_share_directory
+
+
+def generate_launch_description():
+    """
+    Launch simulator and wall following together
+    """
+    
+    # Get package directories
+    wall_follow_dir = get_package_share_directory('wall_follow')
+    sim_dir = get_package_share_directory('f1tenth_gym_ros')
+    
+    # Parameters
+    params_file = os.path.join(wall_follow_dir, 'config', 'wall_follow_params.yaml')
+    
+    # Launch simulator
+    sim_launch = IncludeLaunchDescription(
+        PythonLaunchDescriptionSource([
+            PathJoinSubstitution([
+                FindPackageShare('f1tenth_gym_ros'),
+                'launch',
+                'gym_bridge_launch.py'
+            ])
+        ])
+    )
+    
+    # Wall follow node
+    wall_follow_node = Node(
+        package='wall_follow',
+        executable='wall_follow_node',
+        name='wall_follow_node',
+        output='screen',
+        emulate_tty=True,
+        parameters=[params_file]
+    )
+    
+    return LaunchDescription([
+        sim_launch,
+        wall_follow_node,
+    ])
+```
+
+**Usage:**
+```bash
+ros2 launch wall_follow wall_follow_sim.launch.py
+```
+
+---
+
+## Summary
+
+### What We Learned:
+
+1. **PID Control Theory:**
+   - Proportional, Integral, Derivative components
+   - Tuning methodology
+   - Anti-windup techniques
+
+2. **Geometric Calculations:**
+   - LiDAR beam angle calculations
+   - Distance and angle to walls
+   - Lookahead projection
+
+3. **ROS2 Implementation:**
+   - LaserScan message processing
+   - AckermannDriveStamped publishing
+   - Parameter management
+   - Real-time control loops
+
+4. **Testing and Tuning:**
+   - Systematic PID tuning
+   - Performance evaluation
+   - Debug techniques
+
+5. **Autonomous Driving:**
+   - Reactive control
+   - Velocity adaptation
+   - Safety considerations
+
+### Key Takeaways for Autonomous Racing:
+
+- **PID is fundamental** - Used throughout autonomous systems
+- **Tuning is critical** - Same code, different gains = different behavior
+- **Lookahead is essential** - Prediction enables high-speed control
+- **Start simple** - P-only, then add D, finally I if needed
+- **Test incrementally** - One parameter at a time
+
+---
+
+## Troubleshooting Guide
+
+| Symptom | Likely Cause | Solution |
+|---------|--------------|----------|
+| No movement | Speed = 0 or no drive topic | Check drive message, verify publisher |
+| Constant turning | Wrong angle sign | Verify error calculation sign |
+| Oscillation | Kp too high or Kd too low | Reduce Kp, increase Kd |
+| Drift | Steady-state error | Add small Ki term |
+| Crash | Lookahead too short | Increase lookahead_distance |
+| Slow response | Kp too low | Increase Kp gradually |
+| Jerky motion | Noisy derivative | Add filtering or reduce Kd |
+
+---
