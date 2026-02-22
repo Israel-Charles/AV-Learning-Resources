@@ -658,7 +658,7 @@ ros2 launch safety_node safety_node.launch.py
 
 ## Part 5: Advanced Features and Tuning (20 minutes)
 
-### Step 6.1: Add Safety Regions
+### Step 5.1: Add Safety Regions
 
 Modify to have different thresholds for different angular regions:
 
@@ -683,7 +683,7 @@ def scan_callback(self, scan_msg):
         self.publish_brake()
 ```
 
-### Step 6.2: Add Filtering for False Positives
+### Step 5.2: Add Filtering for False Positives
 
 ```python
 def __init__(self):
