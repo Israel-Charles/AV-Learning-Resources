@@ -789,3 +789,368 @@ def lidar_callback(self, data):
 ```
 
 ---
+
+## Part 4: Configuration and Launch Files
+
+### Step 4.1: Create Parameter File
+
+**File:** `~/ros2_ws/src/follow_the_gap/config/gap_params.yaml`
+
+```yaml
+# Follow the Gap Parameters
+
+reactive_node:
+  ros__parameters:
+    # Safety bubble radius around closest obstacle (meters)
+    # Larger = more conservative, smaller gaps ignored
+    bubble_radius: 0.3
+    
+    # Preprocessing window size for moving average
+    # Larger = smoother but less responsive
+    preprocess_conv_size: 3
+    
+    # Maximum LiDAR range to consider (meters)
+    # Points beyond this are treated as max range
+    max_lidar_range: 3.0
+    
+    # Speed limits (m/s)
+    speed_min: 0.5
+    speed_max: 2.0
+    
+    # Steering gain (proportional control)
+    # Higher = more aggressive steering
+    steering_gain: 1.0
+```
+
+### Step 4.2: Create Launch File
+
+**File:** `~/ros2_ws/src/follow_the_gap/launch/follow_gap.launch.py`
+
+```python
+#!/usr/bin/env python3
+
+import os
+from launch import LaunchDescription
+from launch_ros.actions import Node
+from launch.actions import DeclareLaunchArgument
+from launch.substitutions import LaunchConfiguration
+from ament_index_python.packages import get_package_share_directory
+
+
+def generate_launch_description():
+    """
+    Launch Follow the Gap node
+    """
+    
+    # Get package directory
+    pkg_dir = get_package_share_directory('follow_the_gap')
+    params_file = os.path.join(pkg_dir, 'config', 'gap_params.yaml')
+    
+    # Declare launch arguments
+    bubble_radius_arg = DeclareLaunchArgument(
+        'bubble_radius',
+        default_value='0.3',
+        description='Safety bubble radius (meters)'
+    )
+    
+    speed_max_arg = DeclareLaunchArgument(
+        'speed_max',
+        default_value='2.0',
+        description='Maximum speed (m/s)'
+    )
+    
+    steering_gain_arg = DeclareLaunchArgument(
+        'steering_gain',
+        default_value='1.0',
+        description='Steering proportional gain'
+    )
+    
+    # Reactive node
+    reactive_node = Node(
+        package='follow_the_gap',
+        executable='reactive_node',
+        name='reactive_node',
+        output='screen',
+        emulate_tty=True,
+        parameters=[
+            params_file,
+            {
+                'bubble_radius': LaunchConfiguration('bubble_radius'),
+                'speed_max': LaunchConfiguration('speed_max'),
+                'steering_gain': LaunchConfiguration('steering_gain'),
+            }
+        ]
+    )
+    
+    return LaunchDescription([
+        bubble_radius_arg,
+        speed_max_arg,
+        steering_gain_arg,
+        reactive_node,
+    ])
+```
+
+---
+
+### Step 4.3: Build the Package
+
+```bash
+cd ~/ros2_ws
+colcon build --packages-select follow_the_gap
+source install/setup.bash
+```
+
+---
+
+## Part 5: Testing in Simulator
+
+### Step 5.1: Launch System
+
+**Terminal 1 - Simulator:**
+```bash
+ros2 launch f1tenth_gym_ros gym_bridge_launch.py
+```
+
+**Terminal 2 - Follow the Gap:**
+```bash
+source ~/ros2_ws/install/setup.bash
+ros2 launch follow_the_gap follow_gap.launch.py
+```
+
+### Step 5.2: Initial Observations
+
+**Watch for:**
+- ✅ Car starts moving forward
+- ✅ Car avoids walls/obstacles
+- ✅ Car finds and navigates through gaps
+- ✅ Smooth steering behavior
+
+**Common Issues:**
+- Car spins in place → steering_gain too high
+- Car hits walls → bubble_radius too small
+- Car too slow → increase speed_max
+- Jerky motion → increase preprocess_conv_size
+
+### Step 5.3: Monitor and Debug
+
+**Terminal 3 - Monitor Topics:**
+```bash
+# Check drive commands
+ros2 topic echo /drive
+
+# Check LiDAR data
+ros2 topic hz /scan
+
+# Monitor node
+ros2 node info /reactive_node
+```
+
+**Terminal 4 - RViz Visualization:**
+```bash
+rviz2
+```
+
+**Configure RViz:**
+1. Fixed Frame: `ego_racecar/base_link`
+2. Add LaserScan
+   - Topic: `/scan`
+   - Color: Rainbow by range
+   - Size: 0.05
+3. Add RobotModel
+4. Add TF
+
+**Observe in RViz:**
+- LiDAR scans showing gaps
+- Car's heading toward best point
+- Safety bubble effect (implicitly through behavior)
+
+---
+
+## Part 6: Advanced Improvements
+
+### Step 6.1: Add Gap Quality Metric
+
+Improve best point selection by considering gap quality:
+
+```python
+def find_best_point(self, start_i, end_i, ranges):
+    """
+    Enhanced best point selection considering gap depth and width
+    """
+    if start_i >= end_i or end_i >= len(ranges):
+        return len(ranges) // 2
+    
+    gap_ranges = ranges[start_i:end_i+1]
+    
+    # Calculate gap quality metrics
+    gap_width = end_i - start_i
+    gap_max_depth = np.max(gap_ranges)
+    gap_avg_depth = np.mean(gap_ranges)
+    
+    # Weighted selection
+    # Favor deeper and wider gaps
+    if gap_width > 100 and gap_avg_depth > 2.0:
+        # Large, deep gap -> aim for furthest point
+        best_idx = start_i + np.argmax(gap_ranges)
+    elif gap_width < 50:
+        # Narrow gap -> aim for center for safety
+        best_idx = (start_i + end_i) // 2
+    else:
+        # Medium gap -> balanced approach
+        furthest_idx = start_i + np.argmax(gap_ranges)
+        centered_idx = (start_i + end_i) // 2
+        best_idx = int(0.7 * furthest_idx + 0.3 * centered_idx)
+    
+    return best_idx
+```
+
+### Step 6.2: Add Disparity Extender
+
+Handle sharp transitions in LiDAR data (e.g., corners of obstacles):
+
+```python
+def extend_disparities(self, ranges, threshold=0.5):
+    """
+    Extend safety regions around sharp disparities in range data.
+    Helps with corners and edges of obstacles.
+    
+    Args:
+        ranges: array of LiDAR ranges
+        threshold: minimum disparity to trigger extension (meters)
+        
+    Returns:
+        extended_ranges: ranges with extended disparities
+    """
+    extended_ranges = ranges.copy()
+    
+    # Find disparities (large jumps in consecutive ranges)
+    disparities = np.abs(np.diff(ranges))
+    
+    # Find where disparities exceed threshold
+    disparity_indices = np.where(disparities > threshold)[0]
+    
+    # For each disparity, set nearby points to the closer value
+    for idx in disparity_indices:
+        # Determine which side is closer
+        if ranges[idx] < ranges[idx + 1]:
+            # Left side is closer, extend left value to the right
+            closer_value = ranges[idx]
+            extend_start = idx + 1
+            extend_end = min(idx + 10, len(ranges))  # Extend 10 indices
+            extended_ranges[extend_start:extend_end] = closer_value
+        else:
+            # Right side is closer, extend right value to the left
+            closer_value = ranges[idx + 1]
+            extend_start = max(0, idx - 10)
+            extend_end = idx + 1
+            extended_ranges[extend_start:extend_end] = closer_value
+    
+    return extended_ranges
+```
+
+Add to lidar_callback after preprocessing:
+
+```python
+# After preprocessing
+proc_ranges = self.preprocess_lidar(ranges)
+
+# Apply disparity extender
+proc_ranges = self.extend_disparities(proc_ranges)
+```
+
+### Step 6.3: Add Dynamic Bubble Radius
+
+Adjust bubble size based on speed:
+
+```python
+def __init__(self):
+    # ... existing code ...
+    self.current_speed = 0.0  # Track current speed
+
+def get_bubble_indices(self, data, closest_idx, closest_distance):
+    """
+    Dynamic bubble radius based on current speed
+    """
+    # Scale bubble radius with speed (reaction time)
+    # Higher speed = larger bubble needed
+    dynamic_radius = self.bubble_radius * (1.0 + self.current_speed / self.speed_max)
+    
+    if closest_distance == 0:
+        closest_distance = 0.1
+    
+    bubble_angle = dynamic_radius / closest_distance
+    angle_increment = data.angle_increment
+    bubble_idx_range = int(np.ceil(bubble_angle / angle_increment))
+    
+    start_idx = max(0, closest_idx - bubble_idx_range)
+    end_idx = min(len(data.ranges) - 1, closest_idx + bubble_idx_range)
+    
+    return np.arange(start_idx, end_idx + 1)
+
+def publish_drive(self, steering_angle, speed):
+    """
+    Track current speed for dynamic bubble
+    """
+    self.current_speed = speed
+    
+    drive_msg = AckermannDriveStamped()
+    drive_msg.header.stamp = self.get_clock().now().to_msg()
+    drive_msg.header.frame_id = 'base_link'
+    drive_msg.drive.steering_angle = float(steering_angle)
+    drive_msg.drive.speed = float(speed)
+    
+    self.drive_pub.publish(drive_msg)
+```
+
+## Lab Summary
+
+### What We Learned:
+
+1. **Reactive Control:**
+   - Real-time obstacle avoidance
+   - No mapping or planning required
+   - Fast response to dynamic environments
+
+2. **LiDAR Processing:**
+   - Filtering and smoothing
+   - Range limiting
+   - Disparity handling
+
+3. **Gap Detection:**
+   - Finding free space
+   - Safety bubble creation
+   - Gap quality assessment
+
+4. **Target Selection:**
+   - Balancing safety and progress
+   - Considering gap characteristics
+   - Speed adaptation
+
+5. **ROS2 Implementation:**
+   - Real-time sensor processing
+   - Parameter tuning
+   - Performance monitoring
+
+### Key Takeaways for Autonomous Racing:
+
+- **Reactive methods are fast** - No computation overhead
+- **Complementary to planning** - Can be combined with higher-level strategies
+- **Parameter sensitive** - Tuning is critical for performance
+- **Works in unknown environments** - No prior map needed
+- **Handles dynamic obstacles** - Naturally adapts to changes
+
+---
+
+## Troubleshooting Guide
+
+| Symptom | Likely Cause | Solution |
+|---------|--------------|----------|
+| Car doesn't move | No valid gaps found | Check preprocessing, reduce bubble_radius |
+| Hits obstacles | Bubble too small | Increase bubble_radius |
+| Spins in place | Steering too aggressive | Reduce steering_gain |
+| Too slow | Speed limits too low | Increase speed_max |
+| Jerky steering | Noisy LiDAR data | Increase preprocess_conv_size |
+| Prefers one side | Asymmetric best point selection | Check find_best_point logic |
+| Stops frequently | Max gap not found | Debug find_max_gap, check for zeros |
+
+---
